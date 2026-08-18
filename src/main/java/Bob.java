@@ -1,11 +1,12 @@
+import java.util.List;
 import java.util.Scanner;
 
 public class Bob {
-    private static void printLine() {
+    public static void printLine() {
         System.out.println("        ___________________________________________________________________");
     }
 
-    private static void printBanner() {
+    public static void printBanner() {
         System.out.println("        ____        _     ");
         System.out.println("        |  _ \\      | |    ");
         System.out.println("        | |_) | ___ | |__  ");
@@ -29,6 +30,7 @@ public class Bob {
 
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
+        ListStorage list = new ListStorage();
 
         //welcome statement
         printWelcome();
@@ -37,9 +39,12 @@ public class Bob {
             String command =  input.nextLine();
             if  (command.equals("bye")) {
                 break;
+            } else if (command.equals("list")) {
+                list.printTasks();
             } else {
-                System.out.println("        " + command); // reads a command from user
+                System.out.println("        " + "added: " + command); // reads a command from user
                 printLine();
+                list.addTask(command);
             }
         }
 
