@@ -34,6 +34,19 @@ public class Bob {
         System.out.println("        Bye! See you later alligator!");
     }
 
+    private static void printHelp() {
+        System.out.println("        HEEELPPP is on the way!");
+        System.out.println("        Here is a list of commands you'll need for this chatbot");
+        System.out.println("        1. todo <task>\n" +
+                "        2. deadline <task> /by <date>\n" +
+                "        3. event <task> /from <date> /to <date>\n" +
+                "        4. list\n" +
+                "        5. mark <index>\n" +
+                "        6. unmark <index>\n" +
+                "        7. bye");
+        printLine();
+    }
+
     // used perplexity to help refine code
     private static void addToDo(TaskList list, String arg) {
         if (arg.isEmpty()) {
@@ -135,6 +148,10 @@ public class Bob {
             String arg = parts.length > 1 ? parts[1] : "";
 
             switch (command) {
+                case "help":
+                    printHelp();
+                    break;
+
                 case "bye":
                     scanner.close();
                     printBye();
@@ -166,7 +183,8 @@ public class Bob {
                     break;
 
                 default:
-                    System.out.println("        Invalid command. To exit, type 'bye'.");
+                    System.out.println("        Invalid command :(. If you need help, type 'help'!!\n" +
+                            "        Bob will be on his wayyyy.");
                     printLine();
                     break;
             }
