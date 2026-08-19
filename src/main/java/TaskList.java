@@ -17,7 +17,10 @@ public class TaskList {
         count++;
     }
 
-    public void markTask(int index) {
+    public void markTask(int index) throws BobException {
+        if (index < 0 || index > count) {
+            throw new BobException("Please enter a valid index.");
+        }
         Task task = list[index - 1];
         task.markTask();
 
@@ -25,7 +28,10 @@ public class TaskList {
         Bob.printLine();
     }
 
-    public void unmarkTask(int index) {
+    public void unmarkTask(int index) throws BobException {
+        if (index < 0 || index > count) {
+            throw new BobException("Please enter a valid index.");
+        }
         Task task = list[index - 1];
         task.unmarkTask();
 

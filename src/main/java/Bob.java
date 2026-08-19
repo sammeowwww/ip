@@ -48,11 +48,9 @@ public class Bob {
     }
 
     // used perplexity to help refine code
-    private static void addToDo(TaskList list, String arg) {
+    private static void addToDo(TaskList list, String arg) throws BobException {
         if (arg.isEmpty()) {
-            System.out.println("        You need to enter a task name.");
-            printLine();
-            return;
+            throw new BobException("You need to enter a task name!!");
         }
 
         Task task = new ToDo(arg);
@@ -61,19 +59,15 @@ public class Bob {
     }
 
     // used perplexity to help refine code
-    private static void addDeadline(TaskList list, String arg) {
+    private static void addDeadline(TaskList list, String arg) throws BobException {
         if (arg.isEmpty()) {
-            System.out.println("        You need to enter a task name.");
-            printLine();
-            return;
+            throw new BobException("You need to enter a task name!!");
         }
 
         String[] parts = arg.split("\\s+/by\\s+", 2);
 
         if (parts.length < 2 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty()) {
-            System.out.println("        Use: deadline DESCRIPTION /by DATE.");
-            printLine();
-            return;
+            throw new BobException("Use: deadline <description> /by <date>.");
         }
 
         Task task = new Deadline(parts[0].trim(), parts[1].trim());
@@ -82,19 +76,15 @@ public class Bob {
     }
 
     // used perplexity to help refine code
-    private static void addEvent(TaskList list, String arg) {
+    private static void addEvent(TaskList list, String arg) throws BobException {
         if (arg.isEmpty()) {
-            System.out.println("        You need to enter a task name.");
-            printLine();
-            return;
+            throw new BobException("You need to enter a task name!!");
         }
 
         String[] fromParts = arg.split("\\s+/from\\s+", 2);
 
         if (fromParts.length < 2) {
-            System.out.println("        Use: event DESCRIPTION /from START /to END.");
-            printLine();
-            return;
+            throw new BobException("Use: event <description> /from <date> /to <date>.");
         }
 
         String[] toParts = fromParts[1].split("\\s+/to\\s+", 2);
@@ -103,9 +93,7 @@ public class Bob {
                 || toParts.length < 2
                 || toParts[0].trim().isEmpty()
                 || toParts[1].trim().isEmpty()) {
-            System.out.println("        Use: event DESCRIPTION /from START /to END.");
-            printLine();
-            return;
+            throw new BobException("Use: event <description> /from <date> /to <date>.");
         }
 
         Task task = new Event(
@@ -119,18 +107,34 @@ public class Bob {
 
     }
 
-    private static void unmarkTask(TaskList list, String arg) {
-        Integer i = Integer.parseInt(arg);
-        list.unmarkTask(i);
-        System.out.println("        I have unmarked the task. Please complete it.");
-        printLine();
+    private static void unmarkTask(TaskList list, String arg) throws BobException {
+        if (arg.isEmpty()) {
+            throw new BobException("Use: unmark <task index>.");
+        }
+        try {
+            Integer i = Integer.parseInt(arg);
+            list.unmarkTask(i);
+            System.out.println("        I have unmarked the task. Please complete it.");
+            printLine();
+        } catch (NumberFormatException e) {
+            throw new BobException("Use: unmark <task index>.");
+        }
+
     }
 
-    private static void markTask(TaskList list, String arg) {
-        Integer i = Integer.parseInt(arg);
-        list.markTask(i);
-        System.out.println("        I have marked the task. You're good to go!");
-        printLine();
+    private static void markTask(TaskList list, String arg) throws BobException {
+        if (arg.isEmpty()) {
+            throw new BobException("Use: mark <task index>.");
+        }
+        try {
+            Integer i = Integer.parseInt(arg);
+            list.markTask(i);
+            System.out.println("        I have marked the task. You're good to go!");
+            printLine();
+        } catch (NumberFormatException e) {
+            throw new BobException("Use: mark <task index>.");
+        }
+
     }
 
     public static void main(String[] args) {
@@ -141,52 +145,60 @@ public class Bob {
         printWelcome();
 
         while (true) {
-            String input =  scanner.nextLine().trim();
+            try {
+                String input =  scanner.nextLine().trim();
 
-            String[] parts = input.split("\\s+", 2);
-            String command = parts[0];
-            String arg = parts.length > 1 ? parts[1] : "";
+                if  (input.isEmpty()) {
+                    throw new BobException("Enter a command! " +
+                            "If you need a list of commands, please type 'help'. ");
+                }
 
-            switch (command) {
-                case "help":
-                    printHelp();
-                    break;
+                String[] parts = input.split("\\s+", 2);
+                String command = parts[0];
+                String arg = parts.length > 1 ? parts[1] : "";
 
-                case "bye":
-                    scanner.close();
-                    printBye();
-                    printLine();
-                    return;
+                switch (command) {
+                    case "help":
+                        printHelp();
+                        break;
 
-                case "list":
-                    list.printTasks();
-                    break;
+                    case "bye":
+                        scanner.close();
+                        printBye();
+                        printLine();
+                        return;
 
-                case "unmark":
-                    unmarkTask(list, arg);
-                    break;
+                    case "list":
+                        list.printTasks();
+                        break;
 
-                case "mark":
-                    markTask(list, arg);
-                    break;
+                    case "unmark":
+                        unmarkTask(list, arg);
+                        break;
 
-                case "todo":
-                    addToDo(list, arg);
-                    break;
+                    case "mark":
+                        markTask(list, arg);
+                        break;
 
-                case "deadline":
-                    addDeadline(list, arg);
-                    break;
+                    case "todo":
+                        addToDo(list, arg);
+                        break;
 
-                case "event":
-                    addEvent(list, arg);
-                    break;
+                    case "deadline":
+                        addDeadline(list, arg);
+                        break;
 
-                default:
-                    System.out.println("        Invalid command :(. If you need help, type 'help'!!\n" +
-                            "        Bob will be on his wayyyy.");
-                    printLine();
-                    break;
+                    case "event":
+                        addEvent(list, arg);
+                        break;
+
+                    default:
+                        throw new BobException("Invalid command :(. If you need help, type 'help'!!\n" +
+                                "        Bob will be on his wayyyy.");
+                }
+            } catch (BobException e) {
+                System.out.println("        " + e.getMessage());
+                printLine();
             }
         }
     }
