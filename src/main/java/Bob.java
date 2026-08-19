@@ -29,27 +29,46 @@ public class Bob {
     }
 
     public static void main(String[] args) {
-        Scanner input = new Scanner(System.in);
-        ListStorage list = new ListStorage();
+        Scanner scanner = new Scanner(System.in);
+        TaskList list = new TaskList();
 
         //welcome statement
         printWelcome();
 
         while (true) {
-            String command =  input.nextLine();
-            if  (command.equals("bye")) {
-                break;
-            } else if (command.equals("list")) {
-                list.printTasks();
-            } else {
-                System.out.println("        " + "added: " + command); // reads a command from user
-                printLine();
-                list.addTask(command);
+            String input =  scanner.nextLine().trim();
+
+            String[] parts = input.split("\\s+", 2);
+            String command = parts[0];
+            String arg = parts.length > 1 ? parts[1] : "";
+
+            switch (command) {
+                case "bye":
+                    scanner.close();
+                    printBye();
+                    printLine();
+                    return;
+
+                case "list":
+                    list.printTasks();
+                    break;
+
+                case "unmark":
+                    Integer index1 = Integer.parseInt(arg);
+                    list.unmarkTask(index1);
+                    break;
+
+                case "mark":
+                    Integer index2 = Integer.parseInt(arg);
+                    list.markTask(index2);
+                    break;
+
+                default:
+                    System.out.println("        " + "added: " + input); // reads a command from user
+                    printLine();
+                    list.addTask(input);
+                    break;
             }
         }
-
-        input.close();
-        printBye();
-        printLine();
     }
 }
