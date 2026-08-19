@@ -1,4 +1,5 @@
 public class TaskList {
+    public static final int MAX = 100;
     private Task[] list;
     private int count;
 
@@ -8,6 +9,10 @@ public class TaskList {
     }
 
     public void addTask(Task task) {
+        if (count >= MAX) {
+            System.out.println("        Too many tasks, delete tasks to add more!");
+            return;
+        }
         list[count] = task;
         count++;
     }
@@ -28,9 +33,13 @@ public class TaskList {
         Bob.printLine();
     }
 
+    public int getTaskCount() {
+        return count;
+    }
+
     public void printTasks() {
         if (count == 0) {
-            System.out.println("Your list is empty");
+            System.out.println("        Your list is empty");
             Bob.printLine();
         } else {
             for (int i = 1; i <= count; i++) {

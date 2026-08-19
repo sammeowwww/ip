@@ -146,19 +146,28 @@ public class Bob {
                     break;
 
                 case "unmark":
-                    Integer index1 = Integer.parseInt(arg);
-                    list.unmarkTask(index1);
+                    unmarkTask(list, arg);
                     break;
 
                 case "mark":
-                    Integer index2 = Integer.parseInt(arg);
-                    list.markTask(index2);
+                    markTask(list, arg);
+                    break;
+
+                case "todo":
+                    addToDo(list, arg);
+                    break;
+
+                case "deadline":
+                    addDeadline(list, arg);
+                    break;
+
+                case "event":
+                    addEvent(list, arg);
                     break;
 
                 default:
-                    System.out.println("        " + "added: " + input); // reads a command from user
+                    System.out.println("        Invalid command. To exit, type 'bye'.");
                     printLine();
-                    list.addTask(input);
                     break;
             }
         }
