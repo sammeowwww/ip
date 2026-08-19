@@ -10,15 +10,8 @@ public class Event extends Task {
 
     @Override
     public String toString() {
-        // description
-        String str = "[E][";
-        if (this.done) {
-            str += "X";
-        }
-        str += "] " +  this.description;
-
-        // timeline
-        str += "(from: " + this.from + " to: " + this.to + ")";
-        return str;
+        return "[E]" + super.toString()
+                + " (from: " + this.from
+                + " to: " + this.to + ")";
     }
 }
