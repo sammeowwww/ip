@@ -41,9 +41,10 @@ public class Bob {
                 "        2. deadline <task> /by <date>\n" +
                 "        3. event <task> /from <date> /to <date>\n" +
                 "        4. list\n" +
-                "        5. mark <index>\n" +
-                "        6. unmark <index>\n" +
-                "        7. bye");
+                "        5. mark <task index>\n" +
+                "        6. unmark <task index>\n" +
+                "        7. delete <task index>\n" +
+                "        8. bye");
         printLine();
     }
 
@@ -134,7 +135,21 @@ public class Bob {
         } catch (NumberFormatException e) {
             throw new BobException("Use: mark <task index>.");
         }
+    }
 
+    private static void deleteTask(TaskList list, String arg) throws BobException {
+        if (arg.isEmpty()) {
+            throw new BobException("Use: delete <task index>.");
+        }
+        try {
+            Integer i = Integer.parseInt(arg);
+            list.deleteTask(i);
+            System.out.println("        I have deleted the task. You're good to go!");
+            System.out.println("        You have " + list.getTaskCount() + " tasks.");
+            printLine();
+        } catch (NumberFormatException e) {
+            throw new BobException("Use: delete <task index>.");
+        }
     }
 
     public static void main(String[] args) {
@@ -190,6 +205,10 @@ public class Bob {
 
                     case "event":
                         addEvent(list, arg);
+                        break;
+
+                    case "delete":
+                        deleteTask(list, arg);
                         break;
 
                     default:
