@@ -47,34 +47,32 @@ public class TaskList {
      * Marks the task at the displayed one-based index as completed.
      *
      * @param index One-based index of the task.
+     * @return Task that was marked as completed.
      * @throws BobException If the index does not identify a task.
      */
-    public void markTask(int index) throws BobException {
+    public Task markTask(int index) throws BobException {
         if (index < 1 || index > taskCount) {
             throw new BobException("Please enter a valid index.");
         }
         Task task = tasks.get(index - 1);
         task.markTask();
-
-        System.out.println("        " + task);
-        Bob.printLine();
+        return task;
     }
 
     /**
      * Marks the task at the displayed one-based index as incomplete.
      *
      * @param index One-based index of the task.
+     * @return Task that was marked as incomplete.
      * @throws BobException If the index does not identify a task.
      */
-    public void unmarkTask(int index) throws BobException {
+    public Task unmarkTask(int index) throws BobException {
         if (index < 1 || index > taskCount) {
             throw new BobException("Please enter a valid index.");
         }
         Task task = tasks.get(index - 1);
         task.unmarkTask();
-
-        System.out.println("        " + task);
-        Bob.printLine();
+        return task;
     }
 
     public int getTaskCount() {
@@ -88,22 +86,6 @@ public class TaskList {
      */
     public List<Task> getTasks() {
         return new ArrayList<>(tasks);
-    }
-
-    /**
-     * Prints all tasks in their displayed order.
-     */
-    public void printTasks() {
-        if (taskCount == 0) {
-            System.out.println("        Your list is empty :(... Add more tasks!");
-            Bob.printLine();
-        } else {
-            System.out.println("        Gotcha!! Here are your tasks:");
-            for (int i = 1; i <= taskCount; i++) {
-                System.out.println("        " + i + ". " + tasks.get(i - 1));
-            }
-            Bob.printLine();
-        }
     }
 
     /**
