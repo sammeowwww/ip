@@ -1,4 +1,5 @@
 import java.nio.file.Path;
+import java.time.LocalDate;
 import java.util.Scanner;
 
 public class Bob {
@@ -39,8 +40,8 @@ public class Bob {
         System.out.println("        HEEELPPP is on the way!");
         System.out.println("        Here is a list of commands you'll need for this chatbot");
         System.out.println("        1. todo <task>\n" +
-                "        2. deadline <task> /by <date>\n" +
-                "        3. event <task> /from <date> /to <date>\n" +
+                "        2. deadline <task> /by <yyyy-MM-dd>\n" +
+                "        3. event <task> /from <yyyy-MM-dd> /to <yyyy-MM-dd>\n" +
                 "        4. list\n" +
                 "        5. mark <task index>\n" +
                 "        6. unmark <task index>\n" +
@@ -69,10 +70,12 @@ public class Bob {
         String[] parts = arg.split("\\s+/by\\s+", 2);
 
         if (parts.length < 2 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty()) {
-            throw new BobException("Use: deadline <description> /by <date>.");
+            throw new BobException("Use: deadline <description> /by <yyyy-MM-dd>.");
         }
 
-        Task task = new Deadline(parts[0].trim(), parts[1].trim());
+        // parts[1] will be in the yyyy-MM-dd format already
+        LocalDate deadline = LocalDate.parse(parts[1].trim());
+        Task task = new Deadline(parts[0].trim(), deadline);
         list.addTask(task);
         printAddedTask(list, task);
     }
@@ -86,7 +89,7 @@ public class Bob {
         String[] fromParts = arg.split("\\s+/from\\s+", 2);
 
         if (fromParts.length < 2) {
-            throw new BobException("Use: event <description> /from <date> /to <date>.");
+            throw new BobException("Use: event <description> /from <yyyy-MM-dd> /to <yyyy-MM-dd>.");
         }
 
         String[] toParts = fromParts[1].split("\\s+/to\\s+", 2);
@@ -95,13 +98,16 @@ public class Bob {
                 || toParts.length < 2
                 || toParts[0].trim().isEmpty()
                 || toParts[1].trim().isEmpty()) {
-            throw new BobException("Use: event <description> /from <date> /to <date>.");
+            throw new BobException("Use: event <description> /from <yyyy-MM-dd> /to <yyyy-MM-dd>.");
         }
 
+        LocalDate from = LocalDate.parse(toParts[0]);
+        LocalDate to = LocalDate.parse(toParts[1]);
         Task task = new Event(
+
                 fromParts[0].trim(), // task
-                toParts[0].trim(), // from
-                toParts[1].trim() // to
+                from,
+                to
         );
 
         list.addTask(task);

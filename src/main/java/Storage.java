@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -105,6 +106,7 @@ public class Storage {
             throw new BobException("Completion status must be 0 or 1.");
         }
 
+        //parses each type of task
         Task task;
         switch (fields[0]) {
             case "T":
@@ -117,13 +119,18 @@ public class Storage {
                 if (fields.length != 4) {
                     throw new BobException("A deadline must have 4 fields.");
                 }
-                task = new Deadline(fields[2], fields[3]);
+
+                LocalDate deadline = LocalDate.parse(fields[3]);
+                task = new Deadline(fields[2], deadline);
                 break;
             case "E":
                 if (fields.length != 5) {
                     throw new BobException("An event must have 5 fields.");
                 }
-                task = new Event(fields[2], fields[3], fields[4]);
+
+                LocalDate from = LocalDate.parse(fields[3]);
+                LocalDate to = LocalDate.parse(fields[4]);
+                task = new Event(fields[2], from, to);
                 break;
             default:
                 throw new BobException("Unknown task type: " + fields[0]);
