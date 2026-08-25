@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.List;
 
 public class TaskList {
     private static final int MAX = 100;
@@ -8,6 +9,16 @@ public class TaskList {
     public TaskList() {
         this.list = new ArrayList<>();
         this.count = 0;
+    }
+
+    /**
+     * Creates a task list containing the supplied tasks.
+     *
+     * @param tasks Initial tasks.
+     */
+    public TaskList(List<Task> tasks) {
+        this.list = new ArrayList<>(tasks);
+        this.count = tasks.size();
     }
 
     public void addTask(Task task) throws BobException{
@@ -42,6 +53,15 @@ public class TaskList {
 
     public int getTaskCount() {
         return count;
+    }
+
+    /**
+     * Returns a copy of the tasks in this list.
+     *
+     * @return Copy of the current tasks.
+     */
+    public List<Task> getTasks() {
+        return new ArrayList<>(list);
     }
 
     public void printTasks() {

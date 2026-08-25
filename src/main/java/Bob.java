@@ -1,3 +1,4 @@
+import java.nio.file.Path;
 import java.util.Scanner;
 
 public class Bob {
@@ -154,10 +155,20 @@ public class Bob {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        TaskList list = new TaskList();
+        Storage storage = new Storage(Path.of("data/bob.txt"));
+        TaskList list;
 
         //welcome statement
         printWelcome();
+
+        try {
+            list = new TaskList(storage.loadTasks());
+        } catch (BobException exception) {
+            System.out.println("        " + exception.getMessage());
+            System.out.println("        Starting with an empty task list.");
+            printLine();
+            list = new TaskList();
+        }
 
         while (true) {
             try {
@@ -189,26 +200,32 @@ public class Bob {
 
                     case "unmark":
                         unmarkTask(list, arg);
+                        storage.saveTasks(list.getTasks());
                         break;
 
                     case "mark":
                         markTask(list, arg);
+                        storage.saveTasks(list.getTasks());
                         break;
 
                     case "todo":
                         addToDo(list, arg);
+                        storage.saveTasks(list.getTasks());
                         break;
 
                     case "deadline":
                         addDeadline(list, arg);
+                        storage.saveTasks(list.getTasks());
                         break;
 
                     case "event":
                         addEvent(list, arg);
+                        storage.saveTasks(list.getTasks());
                         break;
 
                     case "delete":
                         deleteTask(list, arg);
+                        storage.saveTasks(list.getTasks());
                         break;
 
                     default:
