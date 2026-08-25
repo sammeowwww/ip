@@ -101,7 +101,6 @@ public class Ui {
      */
     public void showMarkedTask(Task task) {
         System.out.println("        " + task);
-        printLine();
         System.out.println("        I have marked the task. You're good to go!");
         printLine();
     }
@@ -113,7 +112,6 @@ public class Ui {
      */
     public void showUnmarkedTask(Task task) {
         System.out.println("        " + task);
-        printLine();
         System.out.println("        I have unmarked the task. Please complete it.");
         printLine();
     }
