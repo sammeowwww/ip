@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 
 public class TaskList {
-    public static final int MAX = 100;
+    private static final int MAX = 100;
     private ArrayList<Task> list;
     private int count;
 
