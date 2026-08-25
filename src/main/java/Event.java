@@ -10,7 +10,7 @@ public class Event extends Task {
 
     @Override
     public String toDataString() {
-        return " E | " + (isDone() ? "1" : "0")
+        return "E | " + (isDone() ? "1" : "0")
                 + " | " + this.description
                 + " | " + this.from
                 + " | " + this.to;
