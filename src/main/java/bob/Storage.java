@@ -1,9 +1,12 @@
+package bob;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +25,7 @@ public class Storage {
         this.filePath = filePath;
     }
 
-    //used codex
+    // Used Codex to help write this method.
     /**
      * Saves tasks to the data file.
      *
@@ -40,7 +43,7 @@ public class Storage {
             try (BufferedWriter writer = Files.newBufferedWriter(
                     filePath, StandardCharsets.UTF_8)) {
                 for (Task task : tasks) {
-                    writer.write(task.toDataString());
+                    writer.write(task.getDataString());
                     writer.newLine();
                 }
             }
@@ -49,7 +52,7 @@ public class Storage {
         }
     }
 
-    //used codex
+    // Used Codex to help write this method.
     /**
      * Loads tasks from the data file.
      *
@@ -80,9 +83,7 @@ public class Storage {
 
         return tasks;
     }
-
-
-    //used codex
+    // Used Codex to help write this method.
     /**
      * Converts a line from the data file into a task.
      *
@@ -106,34 +107,38 @@ public class Storage {
             throw new BobException("Completion status must be 0 or 1.");
         }
 
-        //parses each type of task
+        // Parse each type of task.
         Task task;
-        switch (fields[0]) {
-            case "T":
-                if (fields.length != 3) {
-                    throw new BobException("A to-do task must have 3 fields.");
-                }
-                task = new ToDo(fields[2]);
-                break;
-            case "D":
-                if (fields.length != 4) {
-                    throw new BobException("A deadline must have 4 fields.");
-                }
+        try {
+            switch (fields[0]) {
+                case "T":
+                    if (fields.length != 3) {
+                        throw new BobException("A to-do task must have 3 fields.");
+                    }
+                    task = new ToDo(fields[2]);
+                    break;
+                case "D":
+                    if (fields.length != 4) {
+                        throw new BobException("A deadline must have 4 fields.");
+                    }
 
-                LocalDate deadline = LocalDate.parse(fields[3]);
-                task = new Deadline(fields[2], deadline);
-                break;
-            case "E":
-                if (fields.length != 5) {
-                    throw new BobException("An event must have 5 fields.");
-                }
+                    LocalDate deadline = LocalDate.parse(fields[3]);
+                    task = new Deadline(fields[2], deadline);
+                    break;
+                case "E":
+                    if (fields.length != 5) {
+                        throw new BobException("An event must have 5 fields.");
+                    }
 
-                LocalDate from = LocalDate.parse(fields[3]);
-                LocalDate to = LocalDate.parse(fields[4]);
-                task = new Event(fields[2], from, to);
-                break;
-            default:
-                throw new BobException("Unknown task type: " + fields[0]);
+                    LocalDate startDate = LocalDate.parse(fields[3]);
+                    LocalDate endDate = LocalDate.parse(fields[4]);
+                    task = new Event(fields[2], startDate, endDate);
+                    break;
+                default:
+                    throw new BobException("Unknown task type: " + fields[0]);
+            }
+        } catch (DateTimeParseException exception) {
+            throw new BobException("Invalid date. Use yyyy-MM-dd.");
         }
 
         if (isDone) {
