@@ -18,10 +18,20 @@ public class ParsedCommand {
         this.argument = argument;
     }
 
+    /**
+     * Returns the command word of the command statement.
+     *
+     * @return Command word of the command statement.
+     */
     public String getCommandWord() {
         return commandWord;
     }
 
+    /**
+     * Returns the argument of the command statement.
+     *
+     * @return Argument of the command statement.
+     */
     public String getArgument() {
         return argument;
     }

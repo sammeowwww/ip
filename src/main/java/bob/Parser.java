@@ -68,6 +68,7 @@ public class Parser {
         }
     }
 
+    // Used to create a todo task.
     // Used Perplexity to help refine this code.
     private Task parseToDo(String argument) throws BobException {
         if (argument.isEmpty()) {
@@ -76,6 +77,7 @@ public class Parser {
         return new ToDo(argument);
     }
 
+    // Used to create a deadline task.
     // Used Perplexity to help refine this code.
     private Task parseDeadline(String argument) throws BobException {
         if (argument.isEmpty()) {
@@ -97,6 +99,7 @@ public class Parser {
         }
     }
 
+    // Used to create an event task.
     // Used Perplexity to help refine this code.
     private Task parseEvent(String argument) throws BobException {
         if (argument.isEmpty()) {
