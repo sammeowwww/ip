@@ -77,6 +77,11 @@ public class TaskList {
         return task;
     }
 
+    /**
+     * Returns the number of tasks in this list.
+     *
+     * @return Number of tasks in this list.
+     */
     public int getTaskCount() {
         return taskCount;
     }

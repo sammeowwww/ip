@@ -49,6 +49,11 @@ public class Task {
         return "T | " + (isDone() ? "1" : "0") + " | " + this.description;
     }
 
+    /**
+     * Returns a display representation containing the completion status and description.
+     *
+     * @return Display representation of this task.
+     */
     @Override
     public String toString() {
         String taskStatus = "[";
