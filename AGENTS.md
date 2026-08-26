@@ -9,8 +9,8 @@ Unless the user says otherwise, assume that you are assisting a student working 
 # Student profile
 
 * Prior knowledge: Basic Java and OOP concepts.
-* Level of programming experience: [to be filled]
-* IDE and level of expertise: [to be filled]
+* Level of programming experience: one year of programming experience
+* IDE and level of expertise: new to IDE's 
 
 # Guidance for interacting with users
 
@@ -23,6 +23,15 @@ Unless the user says otherwise, assume that you are assisting a student working 
   * When faced with a design choice, choose the simplest option that is sufficient for the requirements, while briefly explaining relevant more advanced alternatives.
 
 # Project-specific requirements
+
+## Mandatory project standards
+
+* For every Java code change or review, read and follow
+  `.agents/skills/seedu-java-coding-standard/SKILL.md`. Apply it to all Java
+  code in scope and verify the result before handing work back to the user.
+* Before proposing or creating a Git commit or branch, read and follow
+  `.agents/skills/seedu-git-standard/SKILL.md`. This requirement does not grant
+  permission to commit, push, or create a branch.
 
 ## Java version:
 
