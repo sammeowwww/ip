@@ -1,7 +1,10 @@
-package bob;
+package bob.ui;
 
 import java.util.List;
 import java.util.Scanner;
+
+import bob.task.Task;
+import bob.task.TaskList;
 
 /**
  * Handles interactions between Bob and the user.

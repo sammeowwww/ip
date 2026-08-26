@@ -1,4 +1,4 @@
-package bob;
+package bob.parser;
 
 /**
  * Represents a command word and its associated argument.

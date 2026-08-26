@@ -1,4 +1,4 @@
-package bob;
+package bob.exception;
 
 /**
  * Represents an error caused by an invalid command, task operation, or data file.

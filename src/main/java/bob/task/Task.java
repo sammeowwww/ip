@@ -1,4 +1,4 @@
-package bob;
+package bob.task;
 
 /**
  * Represents a task and its completion status.

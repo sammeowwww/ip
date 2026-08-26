@@ -1,7 +1,9 @@
-package bob;
+package bob.task;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import bob.exception.BobException;
 
 /**
  * Stores and manages the tasks known to Bob.
