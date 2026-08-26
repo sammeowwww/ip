@@ -1,6 +1,7 @@
 package bob;
 
 import java.nio.file.Path;
+import java.util.List;
 
 import bob.exception.BobException;
 import bob.parser.ParsedCommand;
@@ -65,6 +66,11 @@ public class Bob {
                 return true;
             }
             case "list" -> ui.showTasks(taskList);
+            case "find" -> {
+                String keyword = parser.parseKeyword(command);
+                List<Task> matchingTasks = taskList.findTasks(keyword);
+                ui.showMatchingTasks(matchingTasks);
+            }
             case "unmark" -> {
                 Task task = taskList.unmarkTask(parser.parseIndex(command));
                 ui.showUnmarkedTask(task);

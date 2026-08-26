@@ -59,4 +59,26 @@ class ParserTest {
     void parse_blankInput_exceptionThrown() {
         assertThrows(BobException.class, () -> parser.parse("   "));
     }
+
+    /**
+     * Tests that a find command's keyword is returned.
+     *
+     * @throws BobException If the valid keyword is unexpectedly rejected.
+     */
+    @Test
+    void parseKeyword_keywordPresent_keywordReturned() throws BobException {
+        ParsedCommand command = new ParsedCommand("find", "book shelf");
+
+        assertEquals("book shelf", parser.parseKeyword(command));
+    }
+
+    /**
+     * Tests that a find command without a keyword is rejected.
+     */
+    @Test
+    void parseKeyword_keywordMissing_exceptionThrown() {
+        ParsedCommand command = new ParsedCommand("find", "   ");
+
+        assertThrows(BobException.class, () -> parser.parseKeyword(command));
+    }
 }

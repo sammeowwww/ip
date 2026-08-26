@@ -74,7 +74,8 @@ public class Ui {
                 + "        5. mark <task index>\n"
                 + "        6. unmark <task index>\n"
                 + "        7. delete <task index>\n"
-                + "        8. bye");
+                + "        8. find <keyword>\n"
+                + "        9. bye");
         printLine();
     }
 
@@ -92,6 +93,23 @@ public class Ui {
             System.out.println("        Gotcha!! Here are your tasks:");
             for (int i = 0; i < tasks.size(); i++) {
                 System.out.println("        " + (i + 1) + ". " + tasks.get(i));
+            }
+        }
+        printLine();
+    }
+
+    /**
+     * Shows tasks with descriptions that match a search keyword.
+     *
+     * @param matchingTasks Tasks that match the keyword.
+     */
+    public void showMatchingTasks(List<Task> matchingTasks) {
+        if (matchingTasks.isEmpty()) {
+            System.out.println("        No matching tasks found.");
+        } else {
+            System.out.println("        Here are the matching tasks:");
+            for (int i = 0; i < matchingTasks.size(); i++) {
+                System.out.println("        " + (i + 1) + ". " + matchingTasks.get(i));
             }
         }
         printLine();

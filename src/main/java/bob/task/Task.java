@@ -1,5 +1,7 @@
 package bob.task;
 
+import java.util.Locale;
+
 /**
  * Represents a task and its completion status.
  */
@@ -38,6 +40,19 @@ public class Task {
      */
     public boolean isDone() {
         return isDone;
+    }
+
+    /**
+     * Returns whether this task's description contains the specified keyword.
+     * Matching is case-insensitive.
+     *
+     * @param keyword Keyword to search for.
+     * @return True if the description contains the keyword.
+     */
+    public boolean matchesKeyword(String keyword) {
+        String normalizedDescription = description.toLowerCase(Locale.ROOT);
+        String normalizedKeyword = keyword.toLowerCase(Locale.ROOT);
+        return normalizedDescription.contains(normalizedKeyword);
     }
 
     /**

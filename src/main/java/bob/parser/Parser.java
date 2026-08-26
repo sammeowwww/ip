@@ -74,6 +74,21 @@ public class Parser {
         }
     }
 
+    /**
+     * Returns the keyword supplied to a find command.
+     *
+     * @param command Find command containing the keyword.
+     * @return Keyword supplied by the user.
+     * @throws BobException If the keyword is missing.
+     */
+    public String parseKeyword(ParsedCommand command) throws BobException {
+        String keyword = command.getArgument().trim();
+        if (keyword.isEmpty()) {
+            throw new BobException("Use: find <keyword>.");
+        }
+        return keyword;
+    }
+
     // Used to create a todo task.
     // Used Perplexity to help refine this code.
     private Task parseToDo(String argument) throws BobException {

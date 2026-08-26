@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -69,5 +70,51 @@ class TaskListTest {
 
         assertEquals(1, taskList.getTasks().size());
         assertSame(task1, taskList.getTasks().get(0));
+    }
+
+    /**
+     * Tests that partial, case-insensitive matches are returned in task order.
+     */
+    @Test
+    void findTasks_matchingDescriptions_matchingTasksReturnedInOrder() {
+        Task firstTask = new ToDo("Read Book");
+        Task secondTask = new ToDo("buy bookmark");
+        Task nonMatchingTask = new ToDo("write report");
+        TaskList taskList = new TaskList(List.of(firstTask, secondTask, nonMatchingTask));
+
+        List<Task> matchingTasks = taskList.findTasks("BOOK");
+
+        assertEquals(List.of(firstTask, secondTask), matchingTasks);
+    }
+
+    /**
+     * Tests that no matches produces an empty result.
+     */
+    @Test
+    void findTasks_noMatchingDescription_emptyListReturned() {
+        TaskList taskList = new TaskList(List.of(new ToDo("write report")));
+
+        assertTrue(taskList.findTasks("book").isEmpty());
+    }
+
+    /**
+     * Tests that searching an empty task list produces an empty result.
+     */
+    @Test
+    void findTasks_emptyTaskList_emptyListReturned() {
+        TaskList taskList = new TaskList();
+
+        assertTrue(taskList.findTasks("book").isEmpty());
+    }
+
+    /**
+     * Tests that task dates are excluded from keyword matching.
+     */
+    @Test
+    void findTasks_keywordOnlyInTaskDate_emptyListReturned() {
+        Task deadline = new Deadline("return notes", LocalDate.of(2026, 9, 1));
+        TaskList taskList = new TaskList(List.of(deadline));
+
+        assertTrue(taskList.findTasks("2026").isEmpty());
     }
 }

@@ -96,6 +96,23 @@ public class TaskList {
     }
 
     /**
+     * Returns tasks with descriptions containing the specified keyword.
+     * Matching is case-insensitive and preserves the tasks' displayed order.
+     *
+     * @param keyword Keyword to search for.
+     * @return Tasks whose descriptions contain the keyword.
+     */
+    public List<Task> findTasks(String keyword) {
+        List<Task> matchingTasks = new ArrayList<>();
+        for (Task task : tasks) {
+            if (task.matchesKeyword(keyword)) {
+                matchingTasks.add(task);
+            }
+        }
+        return matchingTasks;
+    }
+
+    /**
      * Deletes the task at the displayed one-based index.
      *
      * @param index One-based index of the task.
