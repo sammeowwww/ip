@@ -24,6 +24,11 @@ public class Deadline extends Task {
         this.deadline = deadline;
     }
 
+    /**
+     * Returns the deadline task representation used for data storage.
+     *
+     * @return Data representation containing the task type, status, description, and deadline.
+     */
     @Override
     public String getDataString() {
         return "D | " + (isDone() ? "1" : "0")
@@ -31,6 +36,11 @@ public class Deadline extends Task {
                 + " | " + deadline.format(DATE_FORMAT_DATA);
     }
 
+    /**
+     * Returns a display representation containing the task details and formatted deadline.
+     *
+     * @return Display representation of this deadline task.
+     */
     @Override
     public String toString() {
         return "[D]" + super.toString()

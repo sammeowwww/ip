@@ -26,6 +26,11 @@ public class Event extends Task {
         this.endDate = endDate;
     }
 
+    /**
+     * Returns the event task representation used for data storage.
+     *
+     * @return Data representation containing the task type, status, description, and dates.
+     */
     @Override
     public String getDataString() {
         return "E | " + (isDone() ? "1" : "0")
@@ -34,6 +39,11 @@ public class Event extends Task {
                 + " | " + this.endDate;
     }
 
+    /**
+     * Returns a display representation containing the task details and formatted dates.
+     *
+     * @return Display representation of this event task.
+     */
     @Override
     public String toString() {
         return "[E]" + super.toString()
