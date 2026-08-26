@@ -26,6 +26,9 @@ Unless the user says otherwise, assume that you are assisting a student working 
 
 ## Mandatory project standards
 
+* Before implementing any code, configuration, or project-structure change,
+  read and follow `.agents/skills/plan-before-implementing/SKILL.md`. Present
+  its task-specific plan before editing and obtain confirmation when required.
 * For every Java code change or review, read and follow
   `.agents/skills/seedu-java-coding-standard/SKILL.md`. Apply it to all Java
   code in scope and verify the result before handing work back to the user.
