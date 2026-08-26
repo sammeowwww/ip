@@ -1,1 +1,2 @@
 T | 0 | eat food
+T | 0 | read gods word everyday
