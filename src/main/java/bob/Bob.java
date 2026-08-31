@@ -72,12 +72,12 @@ public class Bob {
                 ui.showMatchingTasks(matchingTasks);
             }
             case "unmark" -> {
-                Task task = taskList.unmarkTask(parser.parseIndex(command));
+                Task task = taskList.unmarkTask(parser.parseTaskNumber(command));
                 ui.showUnmarkedTask(task);
                 storage.saveTasks(taskList.getTasks());
             }
             case "mark" -> {
-                Task task = taskList.markTask(parser.parseIndex(command));
+                Task task = taskList.markTask(parser.parseTaskNumber(command));
                 ui.showMarkedTask(task);
                 storage.saveTasks(taskList.getTasks());
             }
@@ -88,8 +88,8 @@ public class Bob {
                 storage.saveTasks(taskList.getTasks());
             }
             case "delete" -> {
-                taskList.deleteTask(parser.parseIndex(command));
-                ui.showDeletedTask(taskList);
+                taskList.deleteTask(parser.parseTaskNumber(command));
+                ui.showDeletionConfirmation(taskList);
                 storage.saveTasks(taskList.getTasks());
             }
             default -> throw new BobException("Invalid command :(. If you need help, type 'help'!!\n"

@@ -7,7 +7,7 @@ import java.time.format.DateTimeFormatter;
  * Represents a task that occurs between two dates.
  */
 public class Event extends Task {
-    private static final DateTimeFormatter DATE_FORMAT_DISPLAY =
+    private static final DateTimeFormatter DATE_FORMATTER_FOR_DISPLAY =
             DateTimeFormatter.ofPattern("MMM dd yyyy");
 
     private final LocalDate startDate;
@@ -32,7 +32,7 @@ public class Event extends Task {
      * @return Data representation containing the task type, status, description, and dates.
      */
     @Override
-    public String getDataString() {
+    public String toDataString() {
         return "E | " + (isDone() ? "1" : "0")
                 + " | " + this.description
                 + " | " + this.startDate
@@ -47,7 +47,7 @@ public class Event extends Task {
     @Override
     public String toString() {
         return "[E]" + super.toString()
-                + " (from: " + startDate.format(DATE_FORMAT_DISPLAY)
-                + " to: " + endDate.format(DATE_FORMAT_DISPLAY) + ")";
+                + " (from: " + startDate.format(DATE_FORMATTER_FOR_DISPLAY)
+                + " to: " + endDate.format(DATE_FORMATTER_FOR_DISPLAY) + ")";
     }
 }

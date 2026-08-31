@@ -49,7 +49,7 @@ public class Storage {
             try (BufferedWriter writer = Files.newBufferedWriter(
                     filePath, StandardCharsets.UTF_8)) {
                 for (Task task : tasks) {
-                    writer.write(task.getDataString());
+                    writer.write(task.toDataString());
                     writer.newLine();
                 }
             }
@@ -77,7 +77,7 @@ public class Storage {
 
             for (int i = 0; i < lines.size(); i++) {
                 try {
-                    tasks.add(parseTask(lines.get(i)));
+                    tasks.add(parseTaskFromDataLine(lines.get(i)));
                 } catch (BobException exception) {
                     throw new BobException("Invalid data on line " + (i + 1)
                             + ": " + exception.getMessage());
@@ -93,21 +93,21 @@ public class Storage {
     /**
      * Converts a line from the data file into a task.
      *
-     * @param line Line to convert.
-     * @return Task represented by the line.
-     * @throws BobException If the line does not follow the expected format.
+     * @param dataLine Data-file line to convert.
+     * @return Task represented by the data-file line.
+     * @throws BobException If the data-file line does not follow the expected format.
      */
-    private Task parseTask(String line) throws BobException {
-        String[] fields = line.split(" \\| ", -1);
+    private Task parseTaskFromDataLine(String dataLine) throws BobException {
+        String[] taskFields = dataLine.split(" \\| ", -1);
 
-        if (fields.length < 3) {
+        if (taskFields.length < 3) {
             throw new BobException("Not enough fields.");
         }
 
         boolean isDone;
-        if (fields[1].equals("1")) {
+        if (taskFields[1].equals("1")) {
             isDone = true;
-        } else if (fields[1].equals("0")) {
+        } else if (taskFields[1].equals("0")) {
             isDone = false;
         } else {
             throw new BobException("Completion status must be 0 or 1.");
@@ -116,32 +116,32 @@ public class Storage {
         // Parse each type of task.
         Task task;
         try {
-            switch (fields[0]) {
+            switch (taskFields[0]) {
                 case "T":
-                    if (fields.length != 3) {
+                    if (taskFields.length != 3) {
                         throw new BobException("A to-do task must have 3 fields.");
                     }
-                    task = new ToDo(fields[2]);
+                    task = new ToDo(taskFields[2]);
                     break;
                 case "D":
-                    if (fields.length != 4) {
+                    if (taskFields.length != 4) {
                         throw new BobException("A deadline must have 4 fields.");
                     }
 
-                    LocalDate deadline = LocalDate.parse(fields[3]);
-                    task = new Deadline(fields[2], deadline);
+                    LocalDate dueDate = LocalDate.parse(taskFields[3]);
+                    task = new Deadline(taskFields[2], dueDate);
                     break;
                 case "E":
-                    if (fields.length != 5) {
+                    if (taskFields.length != 5) {
                         throw new BobException("An event must have 5 fields.");
                     }
 
-                    LocalDate startDate = LocalDate.parse(fields[3]);
-                    LocalDate endDate = LocalDate.parse(fields[4]);
-                    task = new Event(fields[2], startDate, endDate);
+                    LocalDate startDate = LocalDate.parse(taskFields[3]);
+                    LocalDate endDate = LocalDate.parse(taskFields[4]);
+                    task = new Event(taskFields[2], startDate, endDate);
                     break;
                 default:
-                    throw new BobException("Unknown task type: " + fields[0]);
+                    throw new BobException("Unknown task type: " + taskFields[0]);
             }
         } catch (DateTimeParseException exception) {
             throw new BobException("Invalid date. Use yyyy-MM-dd.");

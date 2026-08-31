@@ -142,7 +142,7 @@ public class Ui {
      *
      * @param taskList Task list after the deletion.
      */
-    public void showDeletedTask(TaskList taskList) {
+    public void showDeletionConfirmation(TaskList taskList) {
         System.out.println("        I have deleted the task. You're good to go!");
         System.out.println("        You have " + taskList.getTaskCount() + " tasks.");
         printLine();

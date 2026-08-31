@@ -60,13 +60,13 @@ public class Parser {
     }
 
     /**
-     * Converts the argument of an index-based command into an integer.
+     * Converts the argument of a task-number command into an integer.
      *
-     * @param command Command containing a task index.
-     * @return Task index represented by the command argument.
+     * @param command Command containing a user-visible task number.
+     * @return Task number represented by the command argument.
      * @throws BobException If the argument is missing or is not an integer.
      */
-    public int parseIndex(ParsedCommand command) throws BobException {
+    public int parseTaskNumber(ParsedCommand command) throws BobException {
         try {
             return Integer.parseInt(command.getArgument());
         } catch (NumberFormatException exception) {
@@ -105,16 +105,16 @@ public class Parser {
             throw new BobException("You need to enter a task name!!");
         }
 
-        String[] deadlineParts = argument.split("\\s+/by\\s+", 2);
-        if (deadlineParts.length < 2
-                || deadlineParts[0].trim().isEmpty()
-                || deadlineParts[1].trim().isEmpty()) {
+        String[] descriptionAndDeadlineParts = argument.split("\\s+/by\\s+", 2);
+        if (descriptionAndDeadlineParts.length < 2
+                || descriptionAndDeadlineParts[0].trim().isEmpty()
+                || descriptionAndDeadlineParts[1].trim().isEmpty()) {
             throw new BobException("Use: deadline <description> /by <yyyy-MM-dd>.");
         }
 
         try {
-            LocalDate deadline = LocalDate.parse(deadlineParts[1].trim());
-            return new Deadline(deadlineParts[0].trim(), deadline);
+            LocalDate dueDate = LocalDate.parse(descriptionAndDeadlineParts[1].trim());
+            return new Deadline(descriptionAndDeadlineParts[0].trim(), dueDate);
         } catch (DateTimeParseException exception) {
             throw new BobException("Please enter the deadline date as yyyy-MM-dd.");
         }
@@ -127,23 +127,23 @@ public class Parser {
             throw new BobException("You need to enter a task name!!");
         }
 
-        String[] fromParts = argument.split("\\s+/from\\s+", 2);
-        if (fromParts.length < 2) {
+        String[] descriptionAndDateRangeParts = argument.split("\\s+/from\\s+", 2);
+        if (descriptionAndDateRangeParts.length < 2) {
             throw new BobException("Use: event <description> /from <yyyy-MM-dd> /to <yyyy-MM-dd>.");
         }
 
-        String[] toParts = fromParts[1].split("\\s+/to\\s+", 2);
-        if (fromParts[0].trim().isEmpty()
-                || toParts.length < 2
-                || toParts[0].trim().isEmpty()
-                || toParts[1].trim().isEmpty()) {
+        String[] startAndEndDateParts = descriptionAndDateRangeParts[1].split("\\s+/to\\s+", 2);
+        if (descriptionAndDateRangeParts[0].trim().isEmpty()
+                || startAndEndDateParts.length < 2
+                || startAndEndDateParts[0].trim().isEmpty()
+                || startAndEndDateParts[1].trim().isEmpty()) {
             throw new BobException("Use: event <description> /from <yyyy-MM-dd> /to <yyyy-MM-dd>.");
         }
 
         try {
-            LocalDate startDate = LocalDate.parse(toParts[0].trim());
-            LocalDate endDate = LocalDate.parse(toParts[1].trim());
-            return new Event(fromParts[0].trim(), startDate, endDate);
+            LocalDate startDate = LocalDate.parse(startAndEndDateParts[0].trim());
+            LocalDate endDate = LocalDate.parse(startAndEndDateParts[1].trim());
+            return new Event(descriptionAndDateRangeParts[0].trim(), startDate, endDate);
         } catch (DateTimeParseException exception) {
             throw new BobException("Please enter the event dates as yyyy-MM-dd.");
         }

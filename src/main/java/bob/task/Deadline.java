@@ -7,21 +7,21 @@ import java.time.format.DateTimeFormatter;
  * Represents a task that must be completed by a specified deadline.
  */
 public class Deadline extends Task {
-    private static final DateTimeFormatter DATE_FORMAT_DATA = DateTimeFormatter.ISO_LOCAL_DATE;
-    private static final DateTimeFormatter DATE_FORMAT_DISPLAY =
+    private static final DateTimeFormatter DATE_FORMATTER_FOR_STORAGE = DateTimeFormatter.ISO_LOCAL_DATE;
+    private static final DateTimeFormatter DATE_FORMATTER_FOR_DISPLAY =
             DateTimeFormatter.ofPattern("MMM dd yyyy");
 
-    private final LocalDate deadline;
+    private final LocalDate dueDate;
 
     /**
      * Creates a deadline task.
      *
      * @param description Description of the task.
-     * @param deadline Deadline by which the task should be completed.
+     * @param dueDate Date by which the task should be completed.
      */
-    public Deadline(String description, LocalDate deadline) {
+    public Deadline(String description, LocalDate dueDate) {
         super(description);
-        this.deadline = deadline;
+        this.dueDate = dueDate;
     }
 
     /**
@@ -30,10 +30,10 @@ public class Deadline extends Task {
      * @return Data representation containing the task type, status, description, and deadline.
      */
     @Override
-    public String getDataString() {
+    public String toDataString() {
         return "D | " + (isDone() ? "1" : "0")
                 + " | " + this.description
-                + " | " + deadline.format(DATE_FORMAT_DATA);
+                + " | " + dueDate.format(DATE_FORMATTER_FOR_STORAGE);
     }
 
     /**
@@ -44,6 +44,6 @@ public class Deadline extends Task {
     @Override
     public String toString() {
         return "[D]" + super.toString()
-                + " (by: " + deadline.format(DATE_FORMAT_DISPLAY) + ")";
+                + " (by: " + dueDate.format(DATE_FORMATTER_FOR_DISPLAY) + ")";
     }
 }

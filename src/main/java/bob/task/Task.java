@@ -49,7 +49,7 @@ public class Task {
      * @param keyword Keyword to search for.
      * @return True if the description contains the keyword.
      */
-    public boolean matchesKeyword(String keyword) {
+    public boolean descriptionContainsKeyword(String keyword) {
         String normalizedDescription = description.toLowerCase(Locale.ROOT);
         String normalizedKeyword = keyword.toLowerCase(Locale.ROOT);
         return normalizedDescription.contains(normalizedKeyword);
@@ -60,7 +60,7 @@ public class Task {
      *
      * @return Data of the task in the form of a string.
      */
-    public String getDataString() {
+    public String toDataString() {
         return "T | " + (isDone() ? "1" : "0") + " | " + this.description;
     }
 
