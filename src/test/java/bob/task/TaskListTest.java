@@ -18,6 +18,41 @@ import bob.exception.BobException;
  */
 class TaskListTest {
     /**
+     * Tests that the varargs constructor accepts no tasks.
+     */
+    @Test
+    void constructor_noVarargs_emptyTaskListCreated() {
+        TaskList taskList = new TaskList(new Task[0]);
+
+        assertTrue(taskList.getTasks().isEmpty());
+    }
+
+    /**
+     * Tests that the varargs constructor accepts one task.
+     */
+    @Test
+    void constructor_oneVararg_taskListContainingTaskCreated() {
+        Task task = new ToDo("read book");
+
+        TaskList taskList = new TaskList(task);
+
+        assertEquals(List.of(task), taskList.getTasks());
+    }
+
+    /**
+     * Tests that the varargs constructor preserves multiple tasks in order.
+     */
+    @Test
+    void constructor_multipleVarargs_orderedTaskListCreated() {
+        Task firstTask = new ToDo("read book");
+        Task secondTask = new ToDo("write report");
+
+        TaskList taskList = new TaskList(firstTask, secondTask);
+
+        assertEquals(List.of(firstTask, secondTask), taskList.getTasks());
+    }
+
+    /**
      * Tests that a valid one-based index marks and returns the selected task.
      *
      * @throws BobException If the valid index is unexpectedly rejected.
