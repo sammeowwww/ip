@@ -1,0 +1,31 @@
+.message-bubble {
+    -fx-font-size: 14px;
+    -fx-line-spacing: 2px;
+}
+
+.user-bubble {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 16px 16px 3px 16px;
+    -fx-border-color: #5c9c9d;
+    -fx-border-radius: 16px 16px 3px 16px;
+    -fx-border-width: 1.5px;
+    -fx-text-fill: #387b7d;
+}
+
+.bob-bubble {
+    -fx-background-color: #e8e2da;
+    -fx-background-radius: 16px 16px 16px 3px;
+    -fx-text-fill: #353838;
+}
+
+.user-dialog {
+    -fx-padding: 3px 0 3px 72px;
+}
+
+.bob-dialog {
+    -fx-padding: 3px 48px 3px 0;
+}
+
+#displayPicture {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.16), 6, 0.2, 0, 2);
+}
