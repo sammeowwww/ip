@@ -54,16 +54,27 @@ public class Ui {
         scanner.close();
     }
 
+    /**
+     * Prints each line of a message with the command-line interface indentation.
+     *
+     * @param message Message to print.
+     */
     private void printMessage(String message) {
         for (String line : message.split("\\R")) {
             System.out.println("        " + line);
         }
     }
 
+    /**
+     * Prints the horizontal separator used between command-line messages.
+     */
     private void printLine() {
         System.out.println("        ___________________________________________________________________");
     }
 
+    /**
+     * Prints Bob's command-line banner.
+     */
     private void printBanner() {
         System.out.println("        ____        _     ");
         System.out.println("        |  _ \\      | |    ");

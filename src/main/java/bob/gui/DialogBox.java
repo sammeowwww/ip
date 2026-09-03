@@ -21,6 +21,12 @@ public class DialogBox extends HBox {
     @FXML
     private ImageView avatarImageView;
 
+    /**
+     * Creates a dialog box and loads its FXML layout.
+     *
+     * @param messageText Message to display.
+     * @throws IllegalStateException If the dialog-box FXML cannot be loaded.
+     */
     private DialogBox(String messageText) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(

@@ -89,8 +89,14 @@ public class Parser {
         return keyword;
     }
 
-    // Used to create a todo task.
     // Used Perplexity to help refine this code.
+    /**
+     * Creates a to-do task from a command argument.
+     *
+     * @param argument Command argument containing the task description.
+     * @return To-do task represented by the argument.
+     * @throws BobException If the task description is missing.
+     */
     private Task parseToDo(String argument) throws BobException {
         if (argument.isEmpty()) {
             throw new BobException("You need to enter a task name!!");
@@ -98,8 +104,14 @@ public class Parser {
         return new ToDo(argument);
     }
 
-    // Used to create a deadline task.
     // Used Perplexity to help refine this code.
+    /**
+     * Creates a deadline task from a command argument.
+     *
+     * @param argument Command argument containing a description and due date.
+     * @return Deadline task represented by the argument.
+     * @throws BobException If the description or due date is missing or invalid.
+     */
     private Task parseDeadline(String argument) throws BobException {
         if (argument.isEmpty()) {
             throw new BobException("You need to enter a task name!!");
@@ -120,8 +132,14 @@ public class Parser {
         }
     }
 
-    // Used to create an event task.
     // Used Perplexity to help refine this code.
+    /**
+     * Creates an event task from a command argument.
+     *
+     * @param argument Command argument containing a description and date range.
+     * @return Event task represented by the argument.
+     * @throws BobException If the description or date range is missing or invalid.
+     */
     private Task parseEvent(String argument) throws BobException {
         if (argument.isEmpty()) {
             throw new BobException("You need to enter a task name!!");

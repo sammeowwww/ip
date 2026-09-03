@@ -86,6 +86,13 @@ public class Bob {
         return startupMessage;
     }
 
+    /**
+     * Executes a parsed command and returns the response for the user.
+     *
+     * @param parsedCommand Parsed command to execute.
+     * @return Response produced by executing the command.
+     * @throws BobException If the command or its task operation is invalid.
+     */
     private String executeParsedCommand(ParsedCommand parsedCommand) throws BobException {
         return switch (parsedCommand.getCommandWord()) {
             case "help" -> getHelpMessage();
@@ -119,6 +126,11 @@ public class Bob {
         };
     }
 
+    /**
+     * Returns instructions for every command supported by Bob.
+     *
+     * @return Help message containing the supported command formats.
+     */
     private String getHelpMessage() {
         return "Bob is to the rescue!!!\n"
                 + "Here are the commands you can use:\n"
@@ -133,6 +145,11 @@ public class Bob {
                 + "9. bye";
     }
 
+    /**
+     * Returns a display message containing every task in the task list.
+     *
+     * @return Task-list message, or an explanation if the list is empty.
+     */
     private String getTaskListMessage() {
         List<Task> tasks = taskList.getTasks();
         if (tasks.isEmpty()) {
@@ -141,6 +158,12 @@ public class Bob {
         return formatTasks("Here are your tasks:", tasks);
     }
 
+    /**
+     * Returns a display message containing tasks that match a keyword.
+     *
+     * @param keyword Keyword to find in task descriptions.
+     * @return Matching-task message, or an explanation if no tasks match.
+     */
     private String getMatchingTasksMessage(String keyword) {
         List<Task> matchingTasks = taskList.findTasks(keyword);
         if (matchingTasks.isEmpty()) {
@@ -149,6 +172,13 @@ public class Bob {
         return formatTasks("Here are the matching tasks:", matchingTasks);
     }
 
+    /**
+     * Formats a heading and ordered collection of tasks as a display message.
+     *
+     * @param heading Heading to place before the tasks.
+     * @param tasks Tasks to include in their displayed order.
+     * @return Formatted message containing the heading and numbered tasks.
+     */
     private String formatTasks(String heading, List<Task> tasks) {
         StringBuilder response = new StringBuilder(heading);
         for (int i = 0; i < tasks.size(); i++) {
