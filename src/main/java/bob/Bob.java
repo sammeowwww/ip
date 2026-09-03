@@ -55,9 +55,9 @@ public class Bob {
 
         boolean shouldExit = false;
         while (!shouldExit) {
-            String input = ui.readCommand();
-            ui.showResponse(getResponse(input));
-            shouldExit = input.trim().equals("bye");
+            String userCommand = ui.readCommand();
+            ui.showResponse(executeUserCommand(userCommand));
+            shouldExit = userCommand.trim().equals("bye");
         }
         ui.close();
     }
@@ -65,13 +65,13 @@ public class Bob {
     /**
      * Executes a user command and returns Bob's response.
      *
-     * @param input User command to execute.
+     * @param userCommand User command to execute.
      * @return Response to display to the user.
      */
-    public String getResponse(String input) {
+    public String executeUserCommand(String userCommand) {
         try {
-            ParsedCommand command = parser.parse(input);
-            return executeCommand(command);
+            ParsedCommand parsedCommand = parser.parse(userCommand);
+            return executeParsedCommand(parsedCommand);
         } catch (BobException exception) {
             return exception.getMessage();
         }
@@ -86,43 +86,37 @@ public class Bob {
         return startupMessage;
     }
 
-    private String executeCommand(ParsedCommand command) throws BobException {
-        switch (command.getCommandWord()) {
-            case "help":
-                return getHelpMessage();
-            case "bye":
-                return "Bye! See you later, alligator!";
-            case "list":
-                return getTaskListMessage();
-            case "find":
-                return getMatchingTasksMessage(parser.parseKeyword(command));
-            case "unmark": {
-                Task task = taskList.unmarkTask(parser.parseTaskNumber(command));
+    private String executeParsedCommand(ParsedCommand parsedCommand) throws BobException {
+        return switch (parsedCommand.getCommandWord()) {
+            case "help" -> getHelpMessage();
+            case "bye" -> "Bye! See you later, alligator!";
+            case "list" -> getTaskListMessage();
+            case "find" -> getMatchingTasksMessage(parser.parseKeyword(parsedCommand));
+            case "unmark" -> {
+                Task task = taskList.unmarkTask(parser.parseTaskNumber(parsedCommand));
                 storage.saveTasks(taskList.getTasks());
-                return task + "\nI have marked the task as incomplete. Please complete it.";
+                yield task + "\nI have marked the task as incomplete. Please complete it.";
             }
-            case "mark": {
-                Task task = taskList.markTask(parser.parseTaskNumber(command));
+            case "mark" -> {
+                Task task = taskList.markTask(parser.parseTaskNumber(parsedCommand));
                 storage.saveTasks(taskList.getTasks());
-                return task + "\nI have marked the task as complete. You're good to go!";
+                yield task + "\nI have marked the task as complete. You're good to go!";
             }
-            case "todo":
-            case "deadline":
-            case "event": {
-                Task task = parser.parseTask(command);
+            case "todo", "deadline", "event" -> {
+                Task task = parser.parseTask(parsedCommand);
                 taskList.addTask(task);
                 storage.saveTasks(taskList.getTasks());
-                return "Nice! I've added this task:\n" + task
+                yield "Nice! I've added this task:\n" + task
                         + "\nYou now have " + taskList.getTaskCount() + " tasks.";
             }
-            case "delete":
-                taskList.deleteTask(parser.parseTaskNumber(command));
+            case "delete" -> {
+                taskList.deleteTask(parser.parseTaskNumber(parsedCommand));
                 storage.saveTasks(taskList.getTasks());
-                return "I have deleted the task.\nYou now have "
+                yield "I have deleted the task.\nYou now have "
                         + taskList.getTaskCount() + " tasks.";
-            default:
-                throw new BobException("Invalid command :( If you need help, type 'help'.");
-        }
+            }
+            default -> throw new BobException("Invalid command :( If you need help, type 'help'.");
+        };
     }
 
     private String getHelpMessage() {

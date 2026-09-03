@@ -26,6 +26,6 @@
     -fx-padding: 3px 48px 3px 0;
 }
 
-#displayPicture {
+#avatarImageView {
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.16), 6, 0.2, 0, 2);
 }

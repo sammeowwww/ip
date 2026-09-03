@@ -16,12 +16,12 @@ import javafx.scene.shape.Circle;
  */
 public class DialogBox extends HBox {
     @FXML
-    private Label dialog;
+    private Label messageLabel;
 
     @FXML
-    private ImageView displayPicture;
+    private ImageView avatarImageView;
 
-    private DialogBox(String text) {
+    private DialogBox(String messageText) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(
                     DialogBox.class.getResource("/view/DialogBox.fxml"));
@@ -31,39 +31,39 @@ public class DialogBox extends HBox {
         } catch (IOException exception) {
             throw new IllegalStateException("Unable to load the dialog box.", exception);
         }
-        dialog.setText(text);
+        messageLabel.setText(messageText);
     }
 
     /**
      * Creates a right-aligned dialog containing a user command.
      *
-     * @param text User command to display.
+     * @param messageText User command to display.
      * @return Dialog box for the user.
      */
-    public static DialogBox getUserDialog(String text) {
-        DialogBox dialogBox = new DialogBox(text);
+    public static DialogBox createUserDialog(String messageText) {
+        DialogBox dialogBox = new DialogBox(messageText);
         dialogBox.getStyleClass().add("user-dialog");
-        dialogBox.dialog.getStyleClass().add("user-bubble");
-        dialogBox.displayPicture.setManaged(false);
-        dialogBox.displayPicture.setVisible(false);
+        dialogBox.messageLabel.getStyleClass().add("user-bubble");
+        dialogBox.avatarImageView.setManaged(false);
+        dialogBox.avatarImageView.setVisible(false);
         return dialogBox;
     }
 
     /**
      * Creates a left-aligned dialog containing Bob's response and avatar.
      *
-     * @param text Bob's response to display.
-     * @param image Bob's avatar.
+     * @param messageText Bob's response to display.
+     * @param bobAvatar Bob's avatar.
      * @return Dialog box for Bob.
      */
-    public static DialogBox getBobDialog(String text, Image image) {
-        DialogBox dialogBox = new DialogBox(text);
+    public static DialogBox createBobDialog(String messageText, Image bobAvatar) {
+        DialogBox dialogBox = new DialogBox(messageText);
         dialogBox.setAlignment(Pos.TOP_LEFT);
         dialogBox.getStyleClass().add("bob-dialog");
-        dialogBox.dialog.getStyleClass().add("bob-bubble");
-        dialogBox.displayPicture.setImage(image);
-        dialogBox.displayPicture.setClip(new Circle(22, 22, 22));
-        dialogBox.getChildren().setAll(dialogBox.displayPicture, dialogBox.dialog);
+        dialogBox.messageLabel.getStyleClass().add("bob-bubble");
+        dialogBox.avatarImageView.setImage(bobAvatar);
+        dialogBox.avatarImageView.setClip(new Circle(22, 22, 22));
+        dialogBox.getChildren().setAll(dialogBox.avatarImageView, dialogBox.messageLabel);
         return dialogBox;
     }
 }

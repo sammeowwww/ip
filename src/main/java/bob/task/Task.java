@@ -49,7 +49,7 @@ public class Task {
      * @param keyword Keyword to search for.
      * @return True if the description contains the keyword.
      */
-    public boolean descriptionContainsKeyword(String keyword) {
+    public boolean hasKeywordInDescription(String keyword) {
         String normalizedDescription = description.toLowerCase(Locale.ROOT);
         String normalizedKeyword = keyword.toLowerCase(Locale.ROOT);
         return normalizedDescription.contains(normalizedKeyword);

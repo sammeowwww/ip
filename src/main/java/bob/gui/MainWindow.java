@@ -15,7 +15,7 @@ import javafx.scene.layout.VBox;
  * Controls Bob's main chat window.
  */
 public class MainWindow extends AnchorPane {
-    private final Image bobImage = new Image(Objects.requireNonNull(
+    private final Image bobAvatar = new Image(Objects.requireNonNull(
             getClass().getResourceAsStream("/images/bob.png")));
 
     @FXML
@@ -47,7 +47,8 @@ public class MainWindow extends AnchorPane {
      */
     public void setBob(Bob bob) {
         this.bob = bob;
-        dialogContainer.getChildren().add(DialogBox.getBobDialog(bob.getStartupMessage(), bobImage));
+        dialogContainer.getChildren().add(
+                DialogBox.createBobDialog(bob.getStartupMessage(), bobAvatar));
         userInput.requestFocus();
     }
 
@@ -55,16 +56,16 @@ public class MainWindow extends AnchorPane {
      * Sends the entered command to Bob and displays both sides of the conversation.
      */
     @FXML
-    public void handleUserInput() {
-        String input = userInput.getText().trim();
-        if (input.isEmpty() || bob == null) {
+    public void submitUserCommand() {
+        String userCommand = userInput.getText().trim();
+        if (userCommand.isEmpty() || bob == null) {
             return;
         }
 
-        String response = bob.getResponse(input);
+        String bobResponse = bob.executeUserCommand(userCommand);
         dialogContainer.getChildren().addAll(
-                DialogBox.getUserDialog(input),
-                DialogBox.getBobDialog(response, bobImage));
+                DialogBox.createUserDialog(userCommand),
+                DialogBox.createBobDialog(bobResponse, bobAvatar));
         userInput.clear();
     }
 }

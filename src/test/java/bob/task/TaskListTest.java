@@ -97,14 +97,14 @@ class TaskListTest {
      */
     @Test
     void deleteTask_validIndex_selectedTaskDeleted() throws BobException {
-        Task task1 = new ToDo("eat food");
-        Task task2 = new ToDo("eat food again");
-        TaskList taskList = new TaskList(List.of(task1, task2));
+        Task remainingTask = new ToDo("eat food");
+        Task deletedTask = new ToDo("eat food again");
+        TaskList taskList = new TaskList(List.of(remainingTask, deletedTask));
 
         taskList.deleteTask(2);
 
         assertEquals(1, taskList.getTasks().size());
-        assertSame(task1, taskList.getTasks().get(0));
+        assertSame(remainingTask, taskList.getTasks().get(0));
     }
 
     /**
