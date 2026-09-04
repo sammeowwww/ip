@@ -14,6 +14,8 @@ import javafx.stage.Stage;
  * Displays Bob's JavaFX user interface.
  */
 public class Main extends Application {
+    private static final double MIN_WINDOW_WIDTH = 380;
+    private static final double MIN_WINDOW_HEIGHT = 560;
     private static final double WINDOW_WIDTH = 430;
     private static final double WINDOW_HEIGHT = 700;
 
@@ -33,8 +35,8 @@ public class Main extends Application {
 
         Scene scene = new Scene(mainWindow);
         stage.setTitle("Bob");
-        stage.setMinWidth(380);
-        stage.setMinHeight(560);
+        stage.setMinWidth(MIN_WINDOW_WIDTH);
+        stage.setMinHeight(MIN_WINDOW_HEIGHT);
         stage.setWidth(WINDOW_WIDTH);
         stage.setHeight(WINDOW_HEIGHT);
         stage.setScene(scene);

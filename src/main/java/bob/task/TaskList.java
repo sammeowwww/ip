@@ -62,9 +62,7 @@ public class TaskList {
      * @throws BobException If the task number does not identify a task.
      */
     public Task markTask(int taskNumber) throws BobException {
-        if (taskNumber < 1 || taskNumber > taskCount) {
-            throw new BobException("Please enter a valid index.");
-        }
+        validateTaskNumber(taskNumber);
         Task task = tasks.get(taskNumber - 1);
         task.markTask();
         return task;
@@ -78,9 +76,7 @@ public class TaskList {
      * @throws BobException If the task number does not identify a task.
      */
     public Task unmarkTask(int taskNumber) throws BobException {
-        if (taskNumber < 1 || taskNumber > taskCount) {
-            throw new BobException("Please enter a valid index.");
-        }
+        validateTaskNumber(taskNumber);
         Task task = tasks.get(taskNumber - 1);
         task.unmarkTask();
         return task;
@@ -128,10 +124,20 @@ public class TaskList {
      * @throws BobException If the task number does not identify a task.
      */
     public void deleteTask(int taskNumber) throws BobException {
+        validateTaskNumber(taskNumber);
+        tasks.remove(taskNumber - 1);
+        taskCount--;
+    }
+
+    /**
+     * Validates that a task number identifies a task in this list.
+     *
+     * @param taskNumber One-based displayed number of the task.
+     * @throws BobException If the task number does not identify a task.
+     */
+    private void validateTaskNumber(int taskNumber) throws BobException {
         if (taskNumber < 1 || taskNumber > taskCount) {
             throw new BobException("Please enter a valid index.");
         }
-        tasks.remove(taskNumber - 1);
-        taskCount--;
     }
 }

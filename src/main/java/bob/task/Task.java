@@ -72,7 +72,7 @@ public class Task {
     @Override
     public String toString() {
         String taskStatus = "[";
-        if (this.isDone) {
+        if (isDone()) {
             taskStatus += "X";
         }
         taskStatus += "] " + this.description;
