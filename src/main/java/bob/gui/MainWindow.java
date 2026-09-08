@@ -44,24 +44,6 @@ public class MainWindow extends AnchorPane {
     }
 
     /**
-     * Documents the fields that the FXML loader must inject.
-     */
-    private void assertFxmlFieldsAreInjected() {
-        assert scrollPane != null : "scrollPane must be injected by FXMLLoader";
-        assert dialogContainer != null : "dialogContainer must be injected by FXMLLoader";
-        assert userInput != null : "userInput must be injected by FXMLLoader";
-        assert sendButton != null : "sendButton must be injected by FXMLLoader";
-    }
-
-    /**
-     * Keeps the latest conversation messages visible as the dialog grows.
-     */
-    private void enableAutomaticScrolling() {
-        dialogContainer.heightProperty().addListener(
-                observable -> scrollPane.setVvalue(BOTTOM_SCROLL_POSITION));
-    }
-
-    /**
      * Supplies the chatbot used to answer commands.
      *
      * @param bob Chatbot backing this window.
@@ -85,6 +67,24 @@ public class MainWindow extends AnchorPane {
         String bobResponse = bob.executeUserCommand(userCommand);
         showConversationTurn(userCommand, bobResponse);
         userInput.clear();
+    }
+
+    /**
+     * Documents the fields that the FXML loader must inject.
+     */
+    private void assertFxmlFieldsAreInjected() {
+        assert scrollPane != null : "scrollPane must be injected by FXMLLoader";
+        assert dialogContainer != null : "dialogContainer must be injected by FXMLLoader";
+        assert userInput != null : "userInput must be injected by FXMLLoader";
+        assert sendButton != null : "sendButton must be injected by FXMLLoader";
+    }
+
+    /**
+     * Keeps the latest conversation messages visible as the dialog grows.
+     */
+    private void enableAutomaticScrolling() {
+        dialogContainer.heightProperty().addListener(
+                observable -> scrollPane.setVvalue(BOTTOM_SCROLL_POSITION));
     }
 
     /**
