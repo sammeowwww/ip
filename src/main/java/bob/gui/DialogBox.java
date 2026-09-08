@@ -30,6 +30,17 @@ public class DialogBox extends HBox {
      * @throws IllegalStateException If the dialog-box FXML cannot be loaded.
      */
     private DialogBox(String messageText) {
+        loadFxmlLayout();
+        assertFxmlFieldsAreInjected();
+        messageLabel.setText(messageText);
+    }
+
+    /**
+     * Loads this dialog box's FXML layout.
+     *
+     * @throws IllegalStateException If the dialog-box FXML cannot be loaded.
+     */
+    private void loadFxmlLayout() {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(
                     DialogBox.class.getResource("/view/DialogBox.fxml"));
@@ -39,9 +50,14 @@ public class DialogBox extends HBox {
         } catch (IOException exception) {
             throw new IllegalStateException("Unable to load the dialog box.", exception);
         }
+    }
+
+    /**
+     * Documents the fields that the FXML loader must inject.
+     */
+    private void assertFxmlFieldsAreInjected() {
         assert messageLabel != null : "messageLabel must be injected by FXMLLoader";
         assert avatarImageView != null : "avatarImageView must be injected by FXMLLoader";
-        messageLabel.setText(messageText);
     }
 
     /**
@@ -52,10 +68,7 @@ public class DialogBox extends HBox {
      */
     public static DialogBox createUserDialog(String messageText) {
         DialogBox dialogBox = new DialogBox(messageText);
-        dialogBox.getStyleClass().add("user-dialog");
-        dialogBox.messageLabel.getStyleClass().add("user-bubble");
-        dialogBox.avatarImageView.setManaged(false);
-        dialogBox.avatarImageView.setVisible(false);
+        dialogBox.configureAsUserDialog();
         return dialogBox;
     }
 
@@ -68,13 +81,32 @@ public class DialogBox extends HBox {
      */
     public static DialogBox createBobDialog(String messageText, Image bobAvatar) {
         DialogBox dialogBox = new DialogBox(messageText);
-        dialogBox.setAlignment(Pos.TOP_LEFT);
-        dialogBox.getStyleClass().add("bob-dialog");
-        dialogBox.messageLabel.getStyleClass().add("bob-bubble");
-        dialogBox.avatarImageView.setImage(bobAvatar);
-        dialogBox.avatarImageView.setClip(
-                new Circle(AVATAR_RADIUS, AVATAR_RADIUS, AVATAR_RADIUS));
-        dialogBox.getChildren().setAll(dialogBox.avatarImageView, dialogBox.messageLabel);
+        dialogBox.configureAsBobDialog(bobAvatar);
         return dialogBox;
+    }
+
+    /**
+     * Configures this dialog to display a user command.
+     */
+    private void configureAsUserDialog() {
+        getStyleClass().add("user-dialog");
+        messageLabel.getStyleClass().add("user-bubble");
+        avatarImageView.setManaged(false);
+        avatarImageView.setVisible(false);
+    }
+
+    /**
+     * Configures this dialog to display a response from Bob.
+     *
+     * @param bobAvatar Bob's avatar.
+     */
+    private void configureAsBobDialog(Image bobAvatar) {
+        setAlignment(Pos.TOP_LEFT);
+        getStyleClass().add("bob-dialog");
+        messageLabel.getStyleClass().add("bob-bubble");
+        avatarImageView.setImage(bobAvatar);
+        avatarImageView.setClip(
+                new Circle(AVATAR_RADIUS, AVATAR_RADIUS, AVATAR_RADIUS));
+        getChildren().setAll(avatarImageView, messageLabel);
     }
 }
