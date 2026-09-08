@@ -174,12 +174,19 @@ public class Parser {
     private DeadlineDetails parseDeadlineDetails(String argument) throws BobException {
         validateTaskDescriptionIsPresent(argument);
         String[] deadlineParts = argument.split("\\s+/by\\s+", 2);
-        if (deadlineParts.length < 2
-                || deadlineParts[0].trim().isEmpty()
-                || deadlineParts[1].trim().isEmpty()) {
+        boolean hasDescriptionAndDeadline = deadlineParts.length == 2;
+        if (!hasDescriptionAndDeadline) {
             throw new BobException("Use: deadline <description> /by <yyyy-MM-dd>.");
         }
-        return new DeadlineDetails(deadlineParts[0].trim(), deadlineParts[1].trim());
+
+        String description = deadlineParts[0].trim();
+        String dueDateText = deadlineParts[1].trim();
+        boolean isDescriptionMissing = description.isEmpty();
+        boolean isDueDateMissing = dueDateText.isEmpty();
+        if (isDescriptionMissing || isDueDateMissing) {
+            throw new BobException("Use: deadline <description> /by <yyyy-MM-dd>.");
+        }
+        return new DeadlineDetails(description, dueDateText);
     }
 
     /**
@@ -198,13 +205,20 @@ public class Parser {
 
         String description = descriptionAndDateRangeParts[0].trim();
         String[] dateParts = descriptionAndDateRangeParts[1].split("\\s+/to\\s+", 2);
-        if (description.isEmpty()
-                || dateParts.length < 2
-                || dateParts[0].trim().isEmpty()
-                || dateParts[1].trim().isEmpty()) {
+        boolean hasStartAndEndDates = dateParts.length == 2;
+        if (!hasStartAndEndDates) {
             throw new BobException("Use: event <description> /from <yyyy-MM-dd> /to <yyyy-MM-dd>.");
         }
-        return new EventDetails(description, dateParts[0].trim(), dateParts[1].trim());
+
+        String startDateText = dateParts[0].trim();
+        String endDateText = dateParts[1].trim();
+        boolean isDescriptionMissing = description.isEmpty();
+        boolean isStartDateMissing = startDateText.isEmpty();
+        boolean isEndDateMissing = endDateText.isEmpty();
+        if (isDescriptionMissing || isStartDateMissing || isEndDateMissing) {
+            throw new BobException("Use: event <description> /from <yyyy-MM-dd> /to <yyyy-MM-dd>.");
+        }
+        return new EventDetails(description, startDateText, endDateText);
     }
 
     /**
