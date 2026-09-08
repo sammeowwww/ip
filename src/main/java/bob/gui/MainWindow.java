@@ -15,6 +15,8 @@ import javafx.scene.layout.VBox;
  * Controls Bob's main chat window.
  */
 public class MainWindow extends AnchorPane {
+    private static final double BOTTOM_SCROLL_POSITION = 1.0;
+
     private final Image bobAvatar = new Image(Objects.requireNonNull(
             getClass().getResourceAsStream("/images/bob.png")));
 
@@ -41,7 +43,8 @@ public class MainWindow extends AnchorPane {
         assert dialogContainer != null : "dialogContainer must be injected by FXMLLoader";
         assert userInput != null : "userInput must be injected by FXMLLoader";
         assert sendButton != null : "sendButton must be injected by FXMLLoader";
-        dialogContainer.heightProperty().addListener(observable -> scrollPane.setVvalue(1.0));
+        dialogContainer.heightProperty().addListener(
+                observable -> scrollPane.setVvalue(BOTTOM_SCROLL_POSITION));
     }
 
     /**
