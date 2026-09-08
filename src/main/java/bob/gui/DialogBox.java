@@ -15,6 +15,8 @@ import javafx.scene.shape.Circle;
  * Displays one user or Bob message in the conversation.
  */
 public class DialogBox extends HBox {
+    private static final double AVATAR_RADIUS = 22;
+
     @FXML
     private Label messageLabel;
 
@@ -70,7 +72,8 @@ public class DialogBox extends HBox {
         dialogBox.getStyleClass().add("bob-dialog");
         dialogBox.messageLabel.getStyleClass().add("bob-bubble");
         dialogBox.avatarImageView.setImage(bobAvatar);
-        dialogBox.avatarImageView.setClip(new Circle(22, 22, 22));
+        dialogBox.avatarImageView.setClip(
+                new Circle(AVATAR_RADIUS, AVATAR_RADIUS, AVATAR_RADIUS));
         dialogBox.getChildren().setAll(dialogBox.avatarImageView, dialogBox.messageLabel);
         return dialogBox;
     }
