@@ -20,6 +20,17 @@ import bob.task.ToDo;
  * Loads tasks from and saves tasks to a data file.
  */
 public class Storage {
+    private static final int TASK_TYPE_FIELD_INDEX = 0;
+    private static final int COMPLETION_STATUS_FIELD_INDEX = 1;
+    private static final int DESCRIPTION_FIELD_INDEX = 2;
+    private static final int DEADLINE_DATE_FIELD_INDEX = 3;
+    private static final int EVENT_START_DATE_FIELD_INDEX = 3;
+    private static final int EVENT_END_DATE_FIELD_INDEX = 4;
+    private static final int MINIMUM_FIELD_COUNT = 3;
+    private static final int TODO_FIELD_COUNT = 3;
+    private static final int DEADLINE_FIELD_COUNT = 4;
+    private static final int EVENT_FIELD_COUNT = 5;
+
     private final Path filePath;
 
     /**
@@ -100,58 +111,107 @@ public class Storage {
      */
     private Task parseTaskFromDataLine(String dataLine) throws BobException {
         String[] taskFields = dataLine.split(" \\| ", -1);
+        validateMinimumFieldCount(taskFields);
 
-        if (taskFields.length < 3) {
-            throw new BobException("Not enough fields.");
-        }
-
-        boolean isDone;
-        if (taskFields[1].equals("1")) {
-            isDone = true;
-        } else if (taskFields[1].equals("0")) {
-            isDone = false;
-        } else {
-            throw new BobException("Completion status must be 0 or 1.");
-        }
-
-        // Parse each type of task.
-        Task task;
-        try {
-            switch (taskFields[0]) {
-                case "T":
-                    if (taskFields.length != 3) {
-                        throw new BobException("A to-do task must have 3 fields.");
-                    }
-                    task = new ToDo(taskFields[2]);
-                    break;
-                case "D":
-                    if (taskFields.length != 4) {
-                        throw new BobException("A deadline must have 4 fields.");
-                    }
-
-                    LocalDate dueDate = LocalDate.parse(taskFields[3]);
-                    task = new Deadline(taskFields[2], dueDate);
-                    break;
-                case "E":
-                    if (taskFields.length != 5) {
-                        throw new BobException("An event must have 5 fields.");
-                    }
-
-                    LocalDate startDate = LocalDate.parse(taskFields[3]);
-                    LocalDate endDate = LocalDate.parse(taskFields[4]);
-                    task = new Event(taskFields[2], startDate, endDate);
-                    break;
-                default:
-                    throw new BobException("Unknown task type: " + taskFields[0]);
-            }
-        } catch (DateTimeParseException exception) {
-            throw new BobException("Invalid date. Use yyyy-MM-dd.");
-        }
-
+        boolean isDone = parseCompletionStatus(taskFields[COMPLETION_STATUS_FIELD_INDEX]);
+        Task task = createTaskFromFields(taskFields);
         if (isDone) {
             task.markTask();
         }
 
         return task;
+    }
+
+    /**
+     * Validates that a data-file line contains the common task fields.
+     *
+     * @param taskFields Fields extracted from a data-file line.
+     * @throws BobException If the line does not contain all common fields.
+     */
+    private void validateMinimumFieldCount(String[] taskFields) throws BobException {
+        if (taskFields.length < MINIMUM_FIELD_COUNT) {
+            throw new BobException("Not enough fields.");
+        }
+    }
+
+    /**
+     * Converts a stored completion marker into its boolean representation.
+     *
+     * @param completionStatus Stored completion marker.
+     * @return True if the task is completed.
+     * @throws BobException If the completion marker is invalid.
+     */
+    private boolean parseCompletionStatus(String completionStatus) throws BobException {
+        return switch (completionStatus) {
+            case "1" -> true;
+            case "0" -> false;
+            default -> throw new BobException("Completion status must be 0 or 1.");
+        };
+    }
+
+    /**
+     * Creates the task represented by a collection of stored fields.
+     *
+     * @param taskFields Fields extracted from a data-file line.
+     * @return Task represented by the fields.
+     * @throws BobException If the task type, field count, or date is invalid.
+     */
+    private Task createTaskFromFields(String[] taskFields) throws BobException {
+        try {
+            return switch (taskFields[TASK_TYPE_FIELD_INDEX]) {
+                case "T" -> createToDoFromFields(taskFields);
+                case "D" -> createDeadlineFromFields(taskFields);
+                case "E" -> createEventFromFields(taskFields);
+                default -> throw new BobException(
+                        "Unknown task type: " + taskFields[TASK_TYPE_FIELD_INDEX]);
+            };
+        } catch (DateTimeParseException exception) {
+            throw new BobException("Invalid date. Use yyyy-MM-dd.");
+        }
+    }
+
+    /**
+     * Creates a to-do task from stored fields.
+     *
+     * @param taskFields Fields extracted from a data-file line.
+     * @return To-do task represented by the fields.
+     * @throws BobException If the number of fields is invalid.
+     */
+    private Task createToDoFromFields(String[] taskFields) throws BobException {
+        if (taskFields.length != TODO_FIELD_COUNT) {
+            throw new BobException("A to-do task must have 3 fields.");
+        }
+        return new ToDo(taskFields[DESCRIPTION_FIELD_INDEX]);
+    }
+
+    /**
+     * Creates a deadline task from stored fields.
+     *
+     * @param taskFields Fields extracted from a data-file line.
+     * @return Deadline task represented by the fields.
+     * @throws BobException If the number of fields is invalid.
+     */
+    private Task createDeadlineFromFields(String[] taskFields) throws BobException {
+        if (taskFields.length != DEADLINE_FIELD_COUNT) {
+            throw new BobException("A deadline must have 4 fields.");
+        }
+        LocalDate dueDate = LocalDate.parse(taskFields[DEADLINE_DATE_FIELD_INDEX]);
+        return new Deadline(taskFields[DESCRIPTION_FIELD_INDEX], dueDate);
+    }
+
+    /**
+     * Creates an event task from stored fields.
+     *
+     * @param taskFields Fields extracted from a data-file line.
+     * @return Event task represented by the fields.
+     * @throws BobException If the number of fields is invalid.
+     */
+    private Task createEventFromFields(String[] taskFields) throws BobException {
+        if (taskFields.length != EVENT_FIELD_COUNT) {
+            throw new BobException("An event must have 5 fields.");
+        }
+        LocalDate startDate = LocalDate.parse(taskFields[EVENT_START_DATE_FIELD_INDEX]);
+        LocalDate endDate = LocalDate.parse(taskFields[EVENT_END_DATE_FIELD_INDEX]);
+        return new Event(taskFields[DESCRIPTION_FIELD_INDEX], startDate, endDate);
     }
 }
