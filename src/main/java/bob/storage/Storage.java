@@ -31,6 +31,89 @@ public class Storage {
     private static final int DEADLINE_FIELD_COUNT = 4;
     private static final int EVENT_FIELD_COUNT = 5;
 
+    /**
+     * Represents a completion status encoded in the data file.
+     */
+    private enum CompletionStatus {
+        INCOMPLETE("0", false),
+        COMPLETE("1", true);
+
+        private final String storageCode;
+        private final boolean isTaskDone;
+
+        /**
+         * Creates a completion status with its storage representation.
+         *
+         * @param storageCode Value used in the data file.
+         * @param isTaskDone Whether this status represents a completed task.
+         */
+        CompletionStatus(String storageCode, boolean isTaskDone) {
+            this.storageCode = storageCode;
+            this.isTaskDone = isTaskDone;
+        }
+
+        /**
+         * Returns the completion status represented by a storage code.
+         *
+         * @param storageCode Value read from the data file.
+         * @return Completion status represented by the value.
+         * @throws BobException If the value does not represent a completion status.
+         */
+        private static CompletionStatus fromStorageCode(String storageCode) throws BobException {
+            for (CompletionStatus completionStatus : values()) {
+                if (completionStatus.storageCode.equals(storageCode)) {
+                    return completionStatus;
+                }
+            }
+            throw new BobException("Completion status must be 0 or 1.");
+        }
+
+        /**
+         * Returns whether this status represents a completed task.
+         *
+         * @return True if the task is completed.
+         */
+        private boolean isTaskDone() {
+            return isTaskDone;
+        }
+    }
+
+    /**
+     * Represents a task type encoded in the data file.
+     */
+    private enum TaskType {
+        TODO("T"),
+        DEADLINE("D"),
+        EVENT("E");
+
+        private final String storageCode;
+
+        /**
+         * Creates a task type with its storage representation.
+         *
+         * @param storageCode Value used in the data file.
+         */
+        TaskType(String storageCode) {
+            this.storageCode = storageCode;
+        }
+
+        /**
+         * Returns the task type represented by a storage code.
+         *
+         * @param storageCode Value read from the data file.
+         * @return Task type represented by the value.
+         * @throws BobException If the value does not represent a task type.
+         */
+        private static TaskType fromStorageCode(String storageCode) throws BobException {
+            for (TaskType taskType : values()) {
+                if (taskType.storageCode.equals(storageCode)) {
+                    return taskType;
+                }
+            }
+            throw new BobException("Unknown task type: " + storageCode);
+        }
+    }
+
     private final Path filePath;
 
     /**
@@ -113,9 +196,11 @@ public class Storage {
         String[] taskFields = dataLine.split(" \\| ", -1);
         validateMinimumFieldCount(taskFields);
 
-        boolean isDone = parseCompletionStatus(taskFields[COMPLETION_STATUS_FIELD_INDEX]);
+        CompletionStatus completionStatus = CompletionStatus.fromStorageCode(
+                taskFields[COMPLETION_STATUS_FIELD_INDEX]);
+        boolean isTaskDone = completionStatus.isTaskDone();
         Task task = createTaskFromFields(taskFields);
-        if (isDone) {
+        if (isTaskDone) {
             task.markTask();
         }
 
@@ -135,21 +220,6 @@ public class Storage {
     }
 
     /**
-     * Converts a stored completion marker into its boolean representation.
-     *
-     * @param completionStatus Stored completion marker.
-     * @return True if the task is completed.
-     * @throws BobException If the completion marker is invalid.
-     */
-    private boolean parseCompletionStatus(String completionStatus) throws BobException {
-        return switch (completionStatus) {
-            case "1" -> true;
-            case "0" -> false;
-            default -> throw new BobException("Completion status must be 0 or 1.");
-        };
-    }
-
-    /**
      * Creates the task represented by a collection of stored fields.
      *
      * @param taskFields Fields extracted from a data-file line.
@@ -157,13 +227,12 @@ public class Storage {
      * @throws BobException If the task type, field count, or date is invalid.
      */
     private Task createTaskFromFields(String[] taskFields) throws BobException {
+        TaskType taskType = TaskType.fromStorageCode(taskFields[TASK_TYPE_FIELD_INDEX]);
         try {
-            return switch (taskFields[TASK_TYPE_FIELD_INDEX]) {
-                case "T" -> createToDoFromFields(taskFields);
-                case "D" -> createDeadlineFromFields(taskFields);
-                case "E" -> createEventFromFields(taskFields);
-                default -> throw new BobException(
-                        "Unknown task type: " + taskFields[TASK_TYPE_FIELD_INDEX]);
+            return switch (taskType) {
+                case TODO -> createToDoFromFields(taskFields);
+                case DEADLINE -> createDeadlineFromFields(taskFields);
+                case EVENT -> createEventFromFields(taskFields);
             };
         } catch (DateTimeParseException exception) {
             throw new BobException("Invalid date. Use yyyy-MM-dd.");
