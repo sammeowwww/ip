@@ -98,32 +98,89 @@ public class Bob {
             case "help" -> getHelpMessage();
             case "bye" -> "Bye! See you later, alligator!";
             case "list" -> getTaskListMessage();
-            case "find" -> getMatchingTasksMessage(parser.parseKeyword(parsedCommand));
-            case "unmark" -> {
-                Task task = taskList.unmarkTask(parser.parseTaskNumber(parsedCommand));
-                storage.saveTasks(taskList.getTasks());
-                yield task + "\nI have marked the task as incomplete. Please complete it.";
-            }
-            case "mark" -> {
-                Task task = taskList.markTask(parser.parseTaskNumber(parsedCommand));
-                storage.saveTasks(taskList.getTasks());
-                yield task + "\nI have marked the task as complete. You're good to go!";
-            }
-            case "todo", "deadline", "event" -> {
-                Task task = parser.parseTask(parsedCommand);
-                taskList.addTask(task);
-                storage.saveTasks(taskList.getTasks());
-                yield "Nice! I've added this task:\n" + task
-                        + "\nYou now have " + taskList.getTaskCount() + " tasks.";
-            }
-            case "delete" -> {
-                taskList.deleteTask(parser.parseTaskNumber(parsedCommand));
-                storage.saveTasks(taskList.getTasks());
-                yield "I have deleted the task.\nYou now have "
-                        + taskList.getTaskCount() + " tasks.";
-            }
+            case "find" -> findTasksFromCommand(parsedCommand);
+            case "unmark" -> markTaskAsIncomplete(parsedCommand);
+            case "mark" -> markTaskAsComplete(parsedCommand);
+            case "todo", "deadline", "event" -> addTaskFromCommand(parsedCommand);
+            case "delete" -> deleteTaskFromCommand(parsedCommand);
             default -> throw new BobException("Invalid command :( If you need help, type 'help'.");
         };
+    }
+
+    /**
+     * Finds tasks using the keyword contained in a parsed command.
+     *
+     * @param parsedCommand Parsed find command.
+     * @return Response containing the matching tasks.
+     * @throws BobException If the command does not contain a valid keyword.
+     */
+    private String findTasksFromCommand(ParsedCommand parsedCommand) throws BobException {
+        String keyword = parser.parseKeyword(parsedCommand);
+        return getMatchingTasksMessage(keyword);
+    }
+
+    /**
+     * Marks the task specified by a parsed command as incomplete.
+     *
+     * @param parsedCommand Parsed unmark command.
+     * @return Response confirming that the task was marked as incomplete.
+     * @throws BobException If the command does not contain a valid task number.
+     */
+    private String markTaskAsIncomplete(ParsedCommand parsedCommand) throws BobException {
+        Task task = taskList.unmarkTask(parser.parseTaskNumber(parsedCommand));
+        saveTaskList();
+        return task + "\nI have marked the task as incomplete. Please complete it.";
+    }
+
+    /**
+     * Marks the task specified by a parsed command as complete.
+     *
+     * @param parsedCommand Parsed mark command.
+     * @return Response confirming that the task was marked as complete.
+     * @throws BobException If the command does not contain a valid task number.
+     */
+    private String markTaskAsComplete(ParsedCommand parsedCommand) throws BobException {
+        Task task = taskList.markTask(parser.parseTaskNumber(parsedCommand));
+        saveTaskList();
+        return task + "\nI have marked the task as complete. You're good to go!";
+    }
+
+    /**
+     * Adds the task described by a parsed command.
+     *
+     * @param parsedCommand Parsed task-creation command.
+     * @return Response confirming that the task was added.
+     * @throws BobException If the command does not describe a valid task.
+     */
+    private String addTaskFromCommand(ParsedCommand parsedCommand) throws BobException {
+        Task task = parser.parseTask(parsedCommand);
+        taskList.addTask(task);
+        saveTaskList();
+        return "Nice! I've added this task:\n" + task
+                + "\nYou now have " + taskList.getTaskCount() + " tasks.";
+    }
+
+    /**
+     * Deletes the task specified by a parsed command.
+     *
+     * @param parsedCommand Parsed delete command.
+     * @return Response confirming that the task was deleted.
+     * @throws BobException If the command does not contain a valid task number.
+     */
+    private String deleteTaskFromCommand(ParsedCommand parsedCommand) throws BobException {
+        taskList.deleteTask(parser.parseTaskNumber(parsedCommand));
+        saveTaskList();
+        return "I have deleted the task.\nYou now have "
+                + taskList.getTaskCount() + " tasks.";
+    }
+
+    /**
+     * Saves the current task list to persistent storage.
+     *
+     * @throws BobException If the task list cannot be saved.
+     */
+    private void saveTaskList() throws BobException {
+        storage.saveTasks(taskList.getTasks());
     }
 
     /**
