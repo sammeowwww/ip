@@ -133,37 +133,6 @@ public class Parser {
         return new Deadline(deadlineDetails.description(), dueDate);
     }
 
-    // Used Perplexity to help refine this code.
-    /**
-     * Creates an event task from a command argument.
-     *
-     * @param argument Command argument containing a description and date range.
-     * @return Event task represented by the argument.
-     * @throws BobException If the description or date range is missing or invalid.
-     */
-    private Task parseEvent(String argument) throws BobException {
-        EventDetails eventDetails = parseEventDetails(argument);
-        LocalDate startDate = parseDate(
-                eventDetails.startDateText(),
-                "Please enter the event dates as yyyy-MM-dd.");
-        LocalDate endDate = parseDate(
-                eventDetails.endDateText(),
-                "Please enter the event dates as yyyy-MM-dd.");
-        return new Event(eventDetails.description(), startDate, endDate);
-    }
-
-    /**
-     * Validates that a task description was supplied.
-     *
-     * @param description Task description to validate.
-     * @throws BobException If the task description is empty.
-     */
-    private void validateTaskDescriptionIsPresent(String description) throws BobException {
-        if (description.isEmpty()) {
-            throw new BobException("You need to enter a task name!!");
-        }
-    }
-
     /**
      * Extracts the description and date text from a deadline argument.
      *
@@ -187,6 +156,25 @@ public class Parser {
             throw new BobException("Use: deadline <description> /by <yyyy-MM-dd>.");
         }
         return new DeadlineDetails(description, dueDateText);
+    }
+
+    // Used Perplexity to help refine this code.
+    /**
+     * Creates an event task from a command argument.
+     *
+     * @param argument Command argument containing a description and date range.
+     * @return Event task represented by the argument.
+     * @throws BobException If the description or date range is missing or invalid.
+     */
+    private Task parseEvent(String argument) throws BobException {
+        EventDetails eventDetails = parseEventDetails(argument);
+        LocalDate startDate = parseDate(
+                eventDetails.startDateText(),
+                "Please enter the event dates as yyyy-MM-dd.");
+        LocalDate endDate = parseDate(
+                eventDetails.endDateText(),
+                "Please enter the event dates as yyyy-MM-dd.");
+        return new Event(eventDetails.description(), startDate, endDate);
     }
 
     /**
@@ -219,6 +207,18 @@ public class Parser {
             throw new BobException("Use: event <description> /from <yyyy-MM-dd> /to <yyyy-MM-dd>.");
         }
         return new EventDetails(description, startDateText, endDateText);
+    }
+
+    /**
+     * Validates that a task description was supplied.
+     *
+     * @param description Task description to validate.
+     * @throws BobException If the task description is empty.
+     */
+    private void validateTaskDescriptionIsPresent(String description) throws BobException {
+        if (description.isEmpty()) {
+            throw new BobException("You need to enter a task name!!");
+        }
     }
 
     /**
