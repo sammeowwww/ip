@@ -134,21 +134,38 @@ public class Storage {
      */
     public void saveTasks(List<Task> tasks) throws BobException {
         try {
-            Path parentDirectory = filePath.getParent();
-
-            if (parentDirectory != null) {
-                Files.createDirectories(parentDirectory);
-            }
-
-            try (BufferedWriter writer = Files.newBufferedWriter(
-                    filePath, StandardCharsets.UTF_8)) {
-                for (Task task : tasks) {
-                    writer.write(task.toDataString());
-                    writer.newLine();
-                }
-            }
+            createParentDirectory();
+            writeTasks(tasks);
         } catch (IOException exception) {
             throw new BobException("Unable to save tasks :( " + exception.getMessage());
+        }
+    }
+
+    /**
+     * Creates the directory containing the data file when one is specified.
+     *
+     * @throws IOException If the directory cannot be created.
+     */
+    private void createParentDirectory() throws IOException {
+        Path parentDirectory = filePath.getParent();
+        if (parentDirectory != null) {
+            Files.createDirectories(parentDirectory);
+        }
+    }
+
+    /**
+     * Writes the supplied tasks to the data file.
+     *
+     * @param tasks Tasks to write.
+     * @throws IOException If a task cannot be written.
+     */
+    private void writeTasks(List<Task> tasks) throws IOException {
+        try (BufferedWriter writer = Files.newBufferedWriter(
+                filePath, StandardCharsets.UTF_8)) {
+            for (Task task : tasks) {
+                writer.write(task.toDataString());
+                writer.newLine();
+            }
         }
     }
 
@@ -160,27 +177,35 @@ public class Storage {
      * @throws BobException If the tasks cannot be loaded.
      */
     public List<Task> loadTasks() throws BobException {
-        List<Task> tasks = new ArrayList<>();
-
         if (Files.notExists(filePath)) {
-            return tasks;
+            return new ArrayList<>();
         }
 
         try {
             List<String> lines = Files.readAllLines(filePath, StandardCharsets.UTF_8);
-
-            for (int i = 0; i < lines.size(); i++) {
-                try {
-                    tasks.add(parseTaskFromDataLine(lines.get(i)));
-                } catch (BobException exception) {
-                    throw new BobException("Invalid data on line " + (i + 1)
-                            + ": " + exception.getMessage());
-                }
-            }
+            return parseTasksFromDataLines(lines);
         } catch (IOException exception) {
             throw new BobException("Unable to load tasks :( " + exception.getMessage());
         }
+    }
 
+    /**
+     * Converts data-file lines into tasks in their stored order.
+     *
+     * @param dataLines Lines read from the data file.
+     * @return Tasks represented by the data-file lines.
+     * @throws BobException If a line does not follow the expected format.
+     */
+    private List<Task> parseTasksFromDataLines(List<String> dataLines) throws BobException {
+        List<Task> tasks = new ArrayList<>();
+        for (int i = 0; i < dataLines.size(); i++) {
+            try {
+                tasks.add(parseTaskFromDataLine(dataLines.get(i)));
+            } catch (BobException exception) {
+                throw new BobException("Invalid data on line " + (i + 1)
+                        + ": " + exception.getMessage());
+            }
+        }
         return tasks;
     }
 
