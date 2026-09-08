@@ -71,11 +71,7 @@ public class Task {
      */
     @Override
     public String toString() {
-        String taskStatus = "[";
-        if (isDone()) {
-            taskStatus += "X";
-        }
-        taskStatus += "] " + this.description;
-        return taskStatus;
+        String completionMark = isDone() ? "X" : "";
+        return "[" + completionMark + "] " + description;
     }
 }
