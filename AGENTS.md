@@ -32,6 +32,10 @@ Unless the user says otherwise, assume that you are assisting a student working 
 * For every Java code change or review, read and follow
   `.agents/skills/seedu-java-coding-standard/SKILL.md`. Apply it to all Java
   code in scope and verify the result before handing work back to the user.
+* For every code change or review, read and follow
+  `.agents/skills/seedu-code-quality-standard/SKILL.md`. Apply its readability,
+  naming, simplicity, safety, duplication, and commenting guidelines to all
+  code in scope and verify the result before handing work back to the user.
 * Before proposing or creating a Git commit or branch, read and follow
   `.agents/skills/seedu-git-standard/SKILL.md`. This requirement does not grant
   permission to commit, push, or create a branch.
