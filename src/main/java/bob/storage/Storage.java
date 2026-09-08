@@ -199,14 +199,28 @@ public class Storage {
     private List<Task> parseTasksFromDataLines(List<String> dataLines) throws BobException {
         List<Task> tasks = new ArrayList<>();
         for (int i = 0; i < dataLines.size(); i++) {
-            try {
-                tasks.add(parseTaskFromDataLine(dataLines.get(i)));
-            } catch (BobException exception) {
-                throw new BobException("Invalid data on line " + (i + 1)
-                        + ": " + exception.getMessage());
-            }
+            int lineNumber = i + 1;
+            Task task = parseTaskWithLineContext(dataLines.get(i), lineNumber);
+            tasks.add(task);
         }
         return tasks;
+    }
+
+    /**
+     * Converts a data-file line into a task and identifies invalid input by line number.
+     *
+     * @param dataLine Data-file line to convert.
+     * @param lineNumber One-based number of the data-file line.
+     * @return Task represented by the data-file line.
+     * @throws BobException If the data-file line does not follow the expected format.
+     */
+    private Task parseTaskWithLineContext(String dataLine, int lineNumber) throws BobException {
+        try {
+            return parseTaskFromDataLine(dataLine);
+        } catch (BobException exception) {
+            throw new BobException("Invalid data on line " + lineNumber
+                    + ": " + exception.getMessage());
+        }
     }
 
     // Used Codex to help write this method.
