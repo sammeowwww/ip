@@ -79,6 +79,17 @@ public class TaskList {
     }
 
     /**
+     * Deletes the task at the displayed one-based number.
+     *
+     * @param taskNumber One-based displayed number of the task.
+     * @throws BobException If the task number does not identify a task.
+     */
+    public void deleteTask(int taskNumber) throws BobException {
+        validateTaskNumber(taskNumber);
+        tasks.remove(taskNumber - 1);
+    }
+
+    /**
      * Returns the number of tasks in this list.
      *
      * @return Number of tasks in this list.
@@ -111,17 +122,6 @@ public class TaskList {
             }
         }
         return matchingTasks;
-    }
-
-    /**
-     * Deletes the task at the displayed one-based number.
-     *
-     * @param taskNumber One-based displayed number of the task.
-     * @throws BobException If the task number does not identify a task.
-     */
-    public void deleteTask(int taskNumber) throws BobException {
-        validateTaskNumber(taskNumber);
-        tasks.remove(taskNumber - 1);
     }
 
     /**
