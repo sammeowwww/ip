@@ -14,6 +14,25 @@ import bob.task.ToDo;
  */
 public class Parser {
     /**
+     * Contains the description and date text extracted from a deadline command.
+     *
+     * @param description Deadline description.
+     * @param dueDateText Text representing the deadline date.
+     */
+    private record DeadlineDetails(String description, String dueDateText) {
+    }
+
+    /**
+     * Contains the description and date texts extracted from an event command.
+     *
+     * @param description Event description.
+     * @param startDateText Text representing the event start date.
+     * @param endDateText Text representing the event end date.
+     */
+    private record EventDetails(String description, String startDateText, String endDateText) {
+    }
+
+    /**
      * Creates a parser for Bob's supported command formats.
      */
     public Parser() {
@@ -47,16 +66,12 @@ public class Parser {
      * @throws BobException If the task details are missing or invalid.
      */
     public Task parseTask(ParsedCommand command) throws BobException {
-        switch (command.getCommandWord()) {
-            case "todo":
-                return parseToDo(command.getArgument());
-            case "deadline":
-                return parseDeadline(command.getArgument());
-            case "event":
-                return parseEvent(command.getArgument());
-            default:
-                throw new BobException("This command does not create a task.");
-        }
+        return switch (command.getCommandWord()) {
+            case "todo" -> parseToDo(command.getArgument());
+            case "deadline" -> parseDeadline(command.getArgument());
+            case "event" -> parseEvent(command.getArgument());
+            default -> throw new BobException("This command does not create a task.");
+        };
     }
 
     /**
@@ -98,9 +113,7 @@ public class Parser {
      * @throws BobException If the task description is missing.
      */
     private Task parseToDo(String argument) throws BobException {
-        if (argument.isEmpty()) {
-            throw new BobException("You need to enter a task name!!");
-        }
+        validateTaskDescriptionIsPresent(argument);
         return new ToDo(argument);
     }
 
@@ -113,23 +126,36 @@ public class Parser {
      * @throws BobException If the description or due date is missing or invalid.
      */
     private Task parseDeadline(String argument) throws BobException {
-        if (argument.isEmpty()) {
-            throw new BobException("You need to enter a task name!!");
-        }
+        DeadlineDetails deadlineDetails = parseDeadlineDetails(argument);
+        LocalDate dueDate = parseDate(
+                deadlineDetails.dueDateText(),
+                "Please enter the deadline date as yyyy-MM-dd.");
+        return new Deadline(deadlineDetails.description(), dueDate);
+    }
 
-        String[] descriptionAndDeadlineParts = argument.split("\\s+/by\\s+", 2);
-        if (descriptionAndDeadlineParts.length < 2
-                || descriptionAndDeadlineParts[0].trim().isEmpty()
-                || descriptionAndDeadlineParts[1].trim().isEmpty()) {
+    /**
+     * Extracts the description and date text from a deadline argument.
+     *
+     * @param argument Deadline command argument.
+     * @return Details extracted from the deadline argument.
+     * @throws BobException If the deadline argument has an invalid format.
+     */
+    private DeadlineDetails parseDeadlineDetails(String argument) throws BobException {
+        validateTaskDescriptionIsPresent(argument);
+        String[] deadlineParts = argument.split("\\s+/by\\s+", 2);
+        boolean hasDescriptionAndDeadline = deadlineParts.length == 2;
+        if (!hasDescriptionAndDeadline) {
             throw new BobException("Use: deadline <description> /by <yyyy-MM-dd>.");
         }
 
-        try {
-            LocalDate dueDate = LocalDate.parse(descriptionAndDeadlineParts[1].trim());
-            return new Deadline(descriptionAndDeadlineParts[0].trim(), dueDate);
-        } catch (DateTimeParseException exception) {
-            throw new BobException("Please enter the deadline date as yyyy-MM-dd.");
+        String description = deadlineParts[0].trim();
+        String dueDateText = deadlineParts[1].trim();
+        boolean isDescriptionMissing = description.isEmpty();
+        boolean isDueDateMissing = dueDateText.isEmpty();
+        if (isDescriptionMissing || isDueDateMissing) {
+            throw new BobException("Use: deadline <description> /by <yyyy-MM-dd>.");
         }
+        return new DeadlineDetails(description, dueDateText);
     }
 
     // Used Perplexity to help refine this code.
@@ -141,29 +167,73 @@ public class Parser {
      * @throws BobException If the description or date range is missing or invalid.
      */
     private Task parseEvent(String argument) throws BobException {
-        if (argument.isEmpty()) {
-            throw new BobException("You need to enter a task name!!");
-        }
+        EventDetails eventDetails = parseEventDetails(argument);
+        LocalDate startDate = parseDate(
+                eventDetails.startDateText(),
+                "Please enter the event dates as yyyy-MM-dd.");
+        LocalDate endDate = parseDate(
+                eventDetails.endDateText(),
+                "Please enter the event dates as yyyy-MM-dd.");
+        return new Event(eventDetails.description(), startDate, endDate);
+    }
 
+    /**
+     * Extracts the description and date texts from an event argument.
+     *
+     * @param argument Event command argument.
+     * @return Details extracted from the event argument.
+     * @throws BobException If the event argument has an invalid format.
+     */
+    private EventDetails parseEventDetails(String argument) throws BobException {
+        validateTaskDescriptionIsPresent(argument);
         String[] descriptionAndDateRangeParts = argument.split("\\s+/from\\s+", 2);
         if (descriptionAndDateRangeParts.length < 2) {
             throw new BobException("Use: event <description> /from <yyyy-MM-dd> /to <yyyy-MM-dd>.");
         }
 
-        String[] startAndEndDateParts = descriptionAndDateRangeParts[1].split("\\s+/to\\s+", 2);
-        if (descriptionAndDateRangeParts[0].trim().isEmpty()
-                || startAndEndDateParts.length < 2
-                || startAndEndDateParts[0].trim().isEmpty()
-                || startAndEndDateParts[1].trim().isEmpty()) {
+        String description = descriptionAndDateRangeParts[0].trim();
+        String[] dateParts = descriptionAndDateRangeParts[1].split("\\s+/to\\s+", 2);
+        boolean hasStartAndEndDates = dateParts.length == 2;
+        if (!hasStartAndEndDates) {
             throw new BobException("Use: event <description> /from <yyyy-MM-dd> /to <yyyy-MM-dd>.");
         }
 
+        String startDateText = dateParts[0].trim();
+        String endDateText = dateParts[1].trim();
+        boolean isDescriptionMissing = description.isEmpty();
+        boolean isStartDateMissing = startDateText.isEmpty();
+        boolean isEndDateMissing = endDateText.isEmpty();
+        if (isDescriptionMissing || isStartDateMissing || isEndDateMissing) {
+            throw new BobException("Use: event <description> /from <yyyy-MM-dd> /to <yyyy-MM-dd>.");
+        }
+        return new EventDetails(description, startDateText, endDateText);
+    }
+
+    /**
+     * Validates that a task description was supplied.
+     *
+     * @param description Task description to validate.
+     * @throws BobException If the task description is empty.
+     */
+    private void validateTaskDescriptionIsPresent(String description) throws BobException {
+        if (description.isEmpty()) {
+            throw new BobException("You need to enter a task name!!");
+        }
+    }
+
+    /**
+     * Converts ISO date text into a date.
+     *
+     * @param dateText Date text to convert.
+     * @param invalidDateMessage Message to use if the date text is invalid.
+     * @return Date represented by the text.
+     * @throws BobException If the date text is not a valid ISO date.
+     */
+    private LocalDate parseDate(String dateText, String invalidDateMessage) throws BobException {
         try {
-            LocalDate startDate = LocalDate.parse(startAndEndDateParts[0].trim());
-            LocalDate endDate = LocalDate.parse(startAndEndDateParts[1].trim());
-            return new Event(descriptionAndDateRangeParts[0].trim(), startDate, endDate);
+            return LocalDate.parse(dateText);
         } catch (DateTimeParseException exception) {
-            throw new BobException("Please enter the event dates as yyyy-MM-dd.");
+            throw new BobException(invalidDateMessage);
         }
     }
 }

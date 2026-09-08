@@ -11,15 +11,12 @@ import bob.exception.BobException;
 public class TaskList {
     private static final int MAX_TASKS = 100;
     private final ArrayList<Task> tasks;
-    private int taskCount;
 
     /**
      * Creates an empty task list.
      */
     public TaskList() {
         this.tasks = new ArrayList<>();
-        this.taskCount = 0;
-        assertTaskListInvariants();
     }
 
     /**
@@ -29,8 +26,6 @@ public class TaskList {
      */
     public TaskList(List<Task> tasks) {
         this.tasks = new ArrayList<>(tasks);
-        this.taskCount = tasks.size();
-        assertTaskListInvariants();
     }
 
     /**
@@ -49,12 +44,10 @@ public class TaskList {
      * @throws BobException If the task list is full.
      */
     public void addTask(Task task) throws BobException {
-        if (taskCount >= MAX_TASKS) {
+        if (tasks.size() >= MAX_TASKS) {
             throw new BobException("Task list is full :( delete tasks to add more!");
         }
         tasks.add(task);
-        taskCount++;
-        assertTaskListInvariants();
     }
 
     /**
@@ -86,12 +79,23 @@ public class TaskList {
     }
 
     /**
+     * Deletes the task at the displayed one-based number.
+     *
+     * @param taskNumber One-based displayed number of the task.
+     * @throws BobException If the task number does not identify a task.
+     */
+    public void deleteTask(int taskNumber) throws BobException {
+        validateTaskNumber(taskNumber);
+        tasks.remove(taskNumber - 1);
+    }
+
+    /**
      * Returns the number of tasks in this list.
      *
      * @return Number of tasks in this list.
      */
     public int getTaskCount() {
-        return taskCount;
+        return tasks.size();
     }
 
     /**
@@ -121,35 +125,14 @@ public class TaskList {
     }
 
     /**
-     * Deletes the task at the displayed one-based number.
-     *
-     * @param taskNumber One-based displayed number of the task.
-     * @throws BobException If the task number does not identify a task.
-     */
-    public void deleteTask(int taskNumber) throws BobException {
-        validateTaskNumber(taskNumber);
-        tasks.remove(taskNumber - 1);
-        taskCount--;
-        assertTaskListInvariants();
-    }
-
-    /**
      * Validates that a task number identifies a task in this list.
      *
      * @param taskNumber One-based displayed number of the task.
      * @throws BobException If the task number does not identify a task.
      */
     private void validateTaskNumber(int taskNumber) throws BobException {
-        if (taskNumber < 1 || taskNumber > taskCount) {
+        if (taskNumber < 1 || taskNumber > tasks.size()) {
             throw new BobException("Please enter a valid index.");
         }
-    }
-
-    /**
-     * Asserts that the task list's internal state is consistent.
-     */
-    private void assertTaskListInvariants() {
-        assert taskCount >= 0 : "Task count must not be negative";
-        assert taskCount == tasks.size() : "Task count must match the number of stored tasks";
     }
 }

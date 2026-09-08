@@ -15,6 +15,8 @@ import javafx.scene.layout.VBox;
  * Controls Bob's main chat window.
  */
 public class MainWindow extends AnchorPane {
+    private static final double BOTTOM_SCROLL_POSITION = 1.0;
+
     private final Image bobAvatar = new Image(Objects.requireNonNull(
             getClass().getResourceAsStream("/images/bob.png")));
 
@@ -37,11 +39,8 @@ public class MainWindow extends AnchorPane {
      */
     @FXML
     public void initialize() {
-        assert scrollPane != null : "scrollPane must be injected by FXMLLoader";
-        assert dialogContainer != null : "dialogContainer must be injected by FXMLLoader";
-        assert userInput != null : "userInput must be injected by FXMLLoader";
-        assert sendButton != null : "sendButton must be injected by FXMLLoader";
-        dialogContainer.heightProperty().addListener(observable -> scrollPane.setVvalue(1.0));
+        assertFxmlFieldsAreInjected();
+        enableAutomaticScrolling();
     }
 
     /**
@@ -51,8 +50,7 @@ public class MainWindow extends AnchorPane {
      */
     public void setBob(Bob bob) {
         this.bob = bob;
-        dialogContainer.getChildren().add(
-                DialogBox.createBobDialog(bob.getStartupMessage(), bobAvatar));
+        showBobMessage(bob.getStartupMessage());
         userInput.requestFocus();
     }
 
@@ -67,9 +65,46 @@ public class MainWindow extends AnchorPane {
         }
 
         String bobResponse = bob.executeUserCommand(userCommand);
+        showConversationTurn(userCommand, bobResponse);
+        userInput.clear();
+    }
+
+    /**
+     * Documents the fields that the FXML loader must inject.
+     */
+    private void assertFxmlFieldsAreInjected() {
+        assert scrollPane != null : "scrollPane must be injected by FXMLLoader";
+        assert dialogContainer != null : "dialogContainer must be injected by FXMLLoader";
+        assert userInput != null : "userInput must be injected by FXMLLoader";
+        assert sendButton != null : "sendButton must be injected by FXMLLoader";
+    }
+
+    /**
+     * Keeps the latest conversation messages visible as the dialog grows.
+     */
+    private void enableAutomaticScrolling() {
+        dialogContainer.heightProperty().addListener(
+                observable -> scrollPane.setVvalue(BOTTOM_SCROLL_POSITION));
+    }
+
+    /**
+     * Displays a user command followed by Bob's response.
+     *
+     * @param userCommand User command to display.
+     * @param bobResponse Bob response to display.
+     */
+    private void showConversationTurn(String userCommand, String bobResponse) {
         dialogContainer.getChildren().addAll(
                 DialogBox.createUserDialog(userCommand),
                 DialogBox.createBobDialog(bobResponse, bobAvatar));
-        userInput.clear();
+    }
+
+    /**
+     * Displays a message from Bob with Bob's avatar.
+     *
+     * @param message Message to display.
+     */
+    private void showBobMessage(String message) {
+        dialogContainer.getChildren().add(DialogBox.createBobDialog(message, bobAvatar));
     }
 }
