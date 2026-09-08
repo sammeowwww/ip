@@ -24,6 +24,31 @@ public class DialogBox extends HBox {
     private ImageView avatarImageView;
 
     /**
+     * Creates a right-aligned dialog containing a user command.
+     *
+     * @param messageText User command to display.
+     * @return Dialog box for the user.
+     */
+    public static DialogBox createUserDialog(String messageText) {
+        DialogBox dialogBox = new DialogBox(messageText);
+        dialogBox.configureAsUserDialog();
+        return dialogBox;
+    }
+
+    /**
+     * Creates a left-aligned dialog containing Bob's response and avatar.
+     *
+     * @param messageText Bob's response to display.
+     * @param bobAvatar Bob's avatar.
+     * @return Dialog box for Bob.
+     */
+    public static DialogBox createBobDialog(String messageText, Image bobAvatar) {
+        DialogBox dialogBox = new DialogBox(messageText);
+        dialogBox.configureAsBobDialog(bobAvatar);
+        return dialogBox;
+    }
+
+    /**
      * Creates a dialog box and loads its FXML layout.
      *
      * @param messageText Message to display.
@@ -58,31 +83,6 @@ public class DialogBox extends HBox {
     private void assertFxmlFieldsAreInjected() {
         assert messageLabel != null : "messageLabel must be injected by FXMLLoader";
         assert avatarImageView != null : "avatarImageView must be injected by FXMLLoader";
-    }
-
-    /**
-     * Creates a right-aligned dialog containing a user command.
-     *
-     * @param messageText User command to display.
-     * @return Dialog box for the user.
-     */
-    public static DialogBox createUserDialog(String messageText) {
-        DialogBox dialogBox = new DialogBox(messageText);
-        dialogBox.configureAsUserDialog();
-        return dialogBox;
-    }
-
-    /**
-     * Creates a left-aligned dialog containing Bob's response and avatar.
-     *
-     * @param messageText Bob's response to display.
-     * @param bobAvatar Bob's avatar.
-     * @return Dialog box for Bob.
-     */
-    public static DialogBox createBobDialog(String messageText, Image bobAvatar) {
-        DialogBox dialogBox = new DialogBox(messageText);
-        dialogBox.configureAsBobDialog(bobAvatar);
-        return dialogBox;
     }
 
     /**
