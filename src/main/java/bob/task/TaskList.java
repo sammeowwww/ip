@@ -2,6 +2,7 @@ package bob.task;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import bob.exception.BobException;
 
@@ -115,13 +116,9 @@ public class TaskList {
      * @return Tasks whose descriptions contain the keyword.
      */
     public List<Task> findTasks(String keyword) {
-        List<Task> matchingTasks = new ArrayList<>();
-        for (Task task : tasks) {
-            if (task.hasKeywordInDescription(keyword)) {
-                matchingTasks.add(task);
-            }
-        }
-        return matchingTasks;
+        return tasks.stream()
+                .filter(task -> task.hasKeywordInDescription(keyword))
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     /**
