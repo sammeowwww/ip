@@ -25,6 +25,15 @@ public class Bob {
     private final String startupMessage;
 
     /**
+     * Contains the task list and startup message produced while loading stored tasks.
+     *
+     * @param taskList Loaded task list, or an empty task list after a loading error.
+     * @param startupMessage Message describing the result of application startup.
+     */
+    private record LoadingResult(TaskList taskList, String startupMessage) {
+    }
+
+    /**
      * Creates Bob using the specified task data file.
      *
      * @param filePath Path of the task data file.
@@ -34,17 +43,26 @@ public class Bob {
         this.parser = new Parser();
         this.storage = new Storage(filePath);
 
-        TaskList loadedTaskList;
-        String loadingMessage = WELCOME_MESSAGE;
+        LoadingResult loadingResult = loadStoredTasks();
+        this.taskList = loadingResult.taskList();
+        this.startupMessage = loadingResult.startupMessage();
+    }
+
+    /**
+     * Loads stored tasks and prepares the message shown when Bob starts.
+     *
+     * @return Result containing the loaded tasks and startup message.
+     */
+    private LoadingResult loadStoredTasks() {
         try {
-            loadedTaskList = new TaskList(storage.loadTasks());
+            TaskList loadedTaskList = new TaskList(storage.loadTasks());
+            return new LoadingResult(loadedTaskList, WELCOME_MESSAGE);
         } catch (BobException exception) {
-            loadingMessage += "\n\n" + exception.getMessage()
+            String loadingErrorMessage = WELCOME_MESSAGE
+                    + "\n\n" + exception.getMessage()
                     + "\nStarting with an empty task list.";
-            loadedTaskList = new TaskList();
+            return new LoadingResult(new TaskList(), loadingErrorMessage);
         }
-        this.taskList = loadedTaskList;
-        this.startupMessage = loadingMessage;
     }
 
     /**
