@@ -24,6 +24,18 @@ public class DialogBox extends HBox {
     private ImageView avatarImageView;
 
     /**
+     * Creates a dialog box and loads its FXML layout.
+     *
+     * @param messageText Message to display.
+     * @throws IllegalStateException If the dialog-box FXML cannot be loaded.
+     */
+    private DialogBox(String messageText) {
+        loadFxmlLayout();
+        assertFxmlFieldsAreInjected();
+        messageLabel.setText(messageText);
+    }
+
+    /**
      * Creates a right-aligned dialog containing a user command.
      *
      * @param messageText User command to display.
@@ -46,18 +58,6 @@ public class DialogBox extends HBox {
         DialogBox dialogBox = new DialogBox(messageText);
         dialogBox.configureAsBobDialog(bobAvatar);
         return dialogBox;
-    }
-
-    /**
-     * Creates a dialog box and loads its FXML layout.
-     *
-     * @param messageText Message to display.
-     * @throws IllegalStateException If the dialog-box FXML cannot be loaded.
-     */
-    private DialogBox(String messageText) {
-        loadFxmlLayout();
-        assertFxmlFieldsAreInjected();
-        messageLabel.setText(messageText);
     }
 
     /**
