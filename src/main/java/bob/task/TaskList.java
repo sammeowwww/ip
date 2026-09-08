@@ -19,6 +19,7 @@ public class TaskList {
     public TaskList() {
         this.tasks = new ArrayList<>();
         this.taskCount = 0;
+        assertTaskListInvariants();
     }
 
     /**
@@ -29,6 +30,7 @@ public class TaskList {
     public TaskList(List<Task> tasks) {
         this.tasks = new ArrayList<>(tasks);
         this.taskCount = tasks.size();
+        assertTaskListInvariants();
     }
 
     /**
@@ -52,6 +54,7 @@ public class TaskList {
         }
         tasks.add(task);
         taskCount++;
+        assertTaskListInvariants();
     }
 
     /**
@@ -127,6 +130,7 @@ public class TaskList {
         validateTaskNumber(taskNumber);
         tasks.remove(taskNumber - 1);
         taskCount--;
+        assertTaskListInvariants();
     }
 
     /**
@@ -139,5 +143,13 @@ public class TaskList {
         if (taskNumber < 1 || taskNumber > taskCount) {
             throw new BobException("Please enter a valid index.");
         }
+    }
+
+    /**
+     * Asserts that the task list's internal state is consistent.
+     */
+    private void assertTaskListInvariants() {
+        assert taskCount >= 0 : "Task count must not be negative";
+        assert taskCount == tasks.size() : "Task count must match the number of stored tasks";
     }
 }
