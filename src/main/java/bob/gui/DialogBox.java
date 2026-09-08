@@ -37,6 +37,8 @@ public class DialogBox extends HBox {
         } catch (IOException exception) {
             throw new IllegalStateException("Unable to load the dialog box.", exception);
         }
+        assert messageLabel != null : "messageLabel must be injected by FXMLLoader";
+        assert avatarImageView != null : "avatarImageView must be injected by FXMLLoader";
         messageLabel.setText(messageText);
     }
 
