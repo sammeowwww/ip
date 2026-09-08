@@ -141,6 +141,26 @@ public class Storage {
         }
     }
 
+    // Used Codex to help write this method.
+    /**
+     * Loads tasks from the data file.
+     *
+     * @return Tasks reconstructed from the data file.
+     * @throws BobException If the tasks cannot be loaded.
+     */
+    public List<Task> loadTasks() throws BobException {
+        if (Files.notExists(filePath)) {
+            return new ArrayList<>();
+        }
+
+        try {
+            List<String> lines = Files.readAllLines(filePath, StandardCharsets.UTF_8);
+            return parseTasksFromDataLines(lines);
+        } catch (IOException exception) {
+            throw new BobException("Unable to load tasks :( " + exception.getMessage());
+        }
+    }
+
     /**
      * Creates the directory containing the data file when one is specified.
      *
@@ -166,26 +186,6 @@ public class Storage {
                 writer.write(task.toDataString());
                 writer.newLine();
             }
-        }
-    }
-
-    // Used Codex to help write this method.
-    /**
-     * Loads tasks from the data file.
-     *
-     * @return Tasks reconstructed from the data file.
-     * @throws BobException If the tasks cannot be loaded.
-     */
-    public List<Task> loadTasks() throws BobException {
-        if (Files.notExists(filePath)) {
-            return new ArrayList<>();
-        }
-
-        try {
-            List<String> lines = Files.readAllLines(filePath, StandardCharsets.UTF_8);
-            return parseTasksFromDataLines(lines);
-        } catch (IOException exception) {
-            throw new BobException("Unable to load tasks :( " + exception.getMessage());
         }
     }
 
