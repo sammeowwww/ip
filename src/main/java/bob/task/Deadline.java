@@ -25,6 +25,15 @@ public class Deadline extends Task {
     }
 
     /**
+     * Returns the date by which this task should be completed.
+     *
+     * @return Due date of this deadline.
+     */
+    public LocalDate getDueDate() {
+        return dueDate;
+    }
+
+    /**
      * Returns the deadline task representation used for data storage.
      *
      * @return Data representation containing the task type, status, description, and deadline.

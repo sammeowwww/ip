@@ -91,6 +91,30 @@ public class TaskList {
     }
 
     /**
+     * Returns the task at a user-visible task number.
+     *
+     * @param taskNumber One-based number of the task to return.
+     * @return Task at the specified task number.
+     * @throws BobException If the task number is outside the task list.
+     */
+    public Task getTask(int taskNumber) throws BobException {
+        validateTaskNumber(taskNumber);
+        return tasks.get(taskNumber - 1);
+    }
+
+    /**
+     * Replaces the task at a user-visible task number.
+     *
+     * @param taskNumber One-based number of the task to replace.
+     * @param replacementTask Task to store at the specified position.
+     * @throws BobException If the task number is outside the task list.
+     */
+    public void replaceTask(int taskNumber, Task replacementTask) throws BobException {
+        validateTaskNumber(taskNumber);
+        tasks.set(taskNumber - 1, replacementTask);
+    }
+
+    /**
      * Returns the number of tasks in this list.
      *
      * @return Number of tasks in this list.

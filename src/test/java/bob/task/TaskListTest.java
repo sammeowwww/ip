@@ -107,6 +107,25 @@ class TaskListTest {
         assertSame(remainingTask, taskList.getTasks().get(0));
     }
 
+    @Test
+    void replaceTask_validIndex_onlySelectedTaskReplaced() throws BobException {
+        Task unchangedTask = new ToDo("read book");
+        Task replacedTask = new ToDo("write report");
+        Task replacementTask = new ToDo("write final report");
+        TaskList taskList = new TaskList(unchangedTask, replacedTask);
+
+        taskList.replaceTask(2, replacementTask);
+
+        assertEquals(List.of(unchangedTask, replacementTask), taskList.getTasks());
+    }
+
+    @Test
+    void replaceTask_invalidIndex_exceptionThrown() {
+        TaskList taskList = new TaskList(new ToDo("read book"));
+
+        assertThrows(BobException.class, () -> taskList.replaceTask(2, new ToDo("write report")));
+    }
+
     /**
      * Tests that partial, case-insensitive matches are returned in task order.
      */
