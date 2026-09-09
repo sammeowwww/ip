@@ -1,11 +1,19 @@
 package bob.parser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.time.LocalDate;
 
 import org.junit.jupiter.api.Test;
 
 import bob.exception.BobException;
+import bob.task.Deadline;
+import bob.task.Event;
+import bob.task.Task;
+import bob.task.ToDo;
 
 /**
  * Tests command parsing performed by {@link Parser}.
@@ -80,5 +88,92 @@ class ParserTest {
         ParsedCommand command = new ParsedCommand("find", "   ");
 
         assertThrows(BobException.class, () -> parser.parseKeyword(command));
+    }
+
+    @Test
+    void parseEditDetails_validDescriptionEdit_editDetailsReturned() throws BobException {
+        ParsedCommand command = new ParsedCommand("edit", "2 description read two books");
+
+        EditDetails editDetails = parser.parseEditDetails(command);
+
+        assertEquals(2, editDetails.taskNumber());
+        assertEquals(EditField.DESCRIPTION, editDetails.field());
+        assertEquals("read two books", editDetails.newValue());
+    }
+
+    @Test
+    void parseEditDetails_missingNewValue_exceptionThrown() {
+        ParsedCommand command = new ParsedCommand("edit", "2 description");
+
+        assertThrows(BobException.class, () -> parser.parseEditDetails(command));
+    }
+
+    @Test
+    void parseEditDetails_unknownField_exceptionThrown() {
+        ParsedCommand command = new ParsedCommand("edit", "2 priority high");
+
+        assertThrows(BobException.class, () -> parser.parseEditDetails(command));
+    }
+
+    @Test
+    void createEditedTask_completedDeadlineDescriptionChanged_otherDetailsPreserved()
+            throws BobException {
+        Deadline deadline = new Deadline("return book", LocalDate.of(2026, 9, 10));
+        deadline.markTask();
+        EditDetails editDetails = new EditDetails(1, EditField.DESCRIPTION, "return notes");
+
+        Task editedTask = parser.createEditedTask(deadline, editDetails);
+
+        assertNotSame(deadline, editedTask);
+        assertTrue(editedTask.isDone());
+        assertEquals("D | 1 | return notes | 2026-09-10", editedTask.toDataString());
+    }
+
+    @Test
+    void createEditedTask_deadlineDueDateChanged_descriptionPreserved() throws BobException {
+        Deadline deadline = new Deadline("return book", LocalDate.of(2026, 9, 10));
+        EditDetails editDetails = new EditDetails(1, EditField.DUE_DATE, "2026-09-20");
+
+        Task editedTask = parser.createEditedTask(deadline, editDetails);
+
+        assertEquals("D | 0 | return book | 2026-09-20", editedTask.toDataString());
+    }
+
+    @Test
+    void createEditedTask_eventStartDateChanged_otherDetailsPreserved() throws BobException {
+        Event event = new Event(
+                "project meeting", LocalDate.of(2026, 9, 10), LocalDate.of(2026, 9, 12));
+        EditDetails editDetails = new EditDetails(1, EditField.START_DATE, "2026-09-11");
+
+        Task editedTask = parser.createEditedTask(event, editDetails);
+
+        assertEquals("E | 0 | project meeting | 2026-09-11 | 2026-09-12", editedTask.toDataString());
+    }
+
+    @Test
+    void createEditedTask_eventEndDateChanged_otherDetailsPreserved() throws BobException {
+        Event event = new Event(
+                "project meeting", LocalDate.of(2026, 9, 10), LocalDate.of(2026, 9, 12));
+        EditDetails editDetails = new EditDetails(1, EditField.END_DATE, "2026-09-13");
+
+        Task editedTask = parser.createEditedTask(event, editDetails);
+
+        assertEquals("E | 0 | project meeting | 2026-09-10 | 2026-09-13", editedTask.toDataString());
+    }
+
+    @Test
+    void createEditedTask_dueDateEditForToDo_exceptionThrown() {
+        ToDo toDo = new ToDo("read book");
+        EditDetails editDetails = new EditDetails(1, EditField.DUE_DATE, "2026-09-20");
+
+        assertThrows(BobException.class, () -> parser.createEditedTask(toDo, editDetails));
+    }
+
+    @Test
+    void createEditedTask_invalidDate_exceptionThrown() {
+        Deadline deadline = new Deadline("return book", LocalDate.of(2026, 9, 10));
+        EditDetails editDetails = new EditDetails(1, EditField.DUE_DATE, "20 September");
+
+        assertThrows(BobException.class, () -> parser.createEditedTask(deadline, editDetails));
     }
 }

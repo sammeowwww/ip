@@ -43,6 +43,15 @@ public class Task {
     }
 
     /**
+     * Returns the task description.
+     *
+     * @return Description of this task.
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
      * Returns whether this task's description contains the specified keyword.
      * Matching is case-insensitive.
      *

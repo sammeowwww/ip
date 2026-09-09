@@ -82,10 +82,22 @@ public class Parser {
      * @throws BobException If the argument is missing or is not an integer.
      */
     public int parseTaskNumber(ParsedCommand command) throws BobException {
+        return parseTaskNumber(command.getArgument(), command.getCommandWord());
+    }
+
+    /**
+     * Converts text containing a task number into an integer.
+     *
+     * @param taskNumberText Text containing the task number.
+     * @param commandWord Command whose task number is being parsed.
+     * @return Task number represented by the text.
+     * @throws BobException If the text does not represent an integer.
+     */
+    private int parseTaskNumber(String taskNumberText, String commandWord) throws BobException {
         try {
-            return Integer.parseInt(command.getArgument());
+            return Integer.parseInt(taskNumberText);
         } catch (NumberFormatException exception) {
-            throw new BobException("Use: " + command.getCommandWord() + " <task index>.");
+            throw new BobException("Use: " + commandWord + " <task index>.");
         }
     }
 
@@ -102,6 +114,56 @@ public class Parser {
             throw new BobException("Use: find <keyword>.");
         }
         return keyword;
+    }
+
+    /**
+     * Extracts the target task, field, and new value from an edit command.
+     *
+     * @param command Edit command to interpret.
+     * @return Details needed to edit the selected task.
+     * @throws BobException If the command does not follow the edit command format.
+     */
+    public EditDetails parseEditDetails(ParsedCommand command) throws BobException {
+        String editArgument = command.getArgument().trim();
+        String[] editParts = editArgument.split("\\s+", 3);
+        boolean hasTaskNumberFieldAndValue = editParts.length == 3;
+        if (!hasTaskNumberFieldAndValue) {
+            throw new BobException("Use: edit <task index> <field> <new value>.");
+        }
+
+        String taskNumberText = editParts[0];
+        String fieldCommandWord = editParts[1];
+        String newValue = editParts[2].trim();
+        boolean isNewValueMissing = newValue.isBlank();
+        if (isNewValueMissing) {
+            throw new BobException("Use: edit <task index> <field> <new value>.");
+        }
+
+        int taskNumber = parseTaskNumber(taskNumberText, command.getCommandWord());
+        EditField field = EditField.fromCommandWord(fieldCommandWord);
+        return new EditDetails(taskNumber, field, newValue);
+    }
+
+    /**
+     * Creates an edited copy of a task while retaining all unedited details.
+     *
+     * @param task Existing task to copy.
+     * @param editDetails Field and replacement value supplied by the user.
+     * @return Edited copy of the existing task.
+     * @throws BobException If the selected field is not valid for the task type.
+     */
+    public Task createEditedTask(Task task, EditDetails editDetails) throws BobException {
+        Task editedTask = switch (editDetails.field()) {
+            case DESCRIPTION -> createTaskWithDescription(task, editDetails.newValue());
+            case DUE_DATE -> createDeadlineWithDueDate(task, editDetails.newValue());
+            case START_DATE -> createEventWithStartDate(task, editDetails.newValue());
+            case END_DATE -> createEventWithEndDate(task, editDetails.newValue());
+            default -> throw new BobException("This edit field is not supported.");
+        };
+        if (task.isDone()) {
+            editedTask.markTask();
+        }
+        return editedTask;
     }
 
     // Used Perplexity to help refine this code.
@@ -235,5 +297,75 @@ public class Parser {
         } catch (DateTimeParseException exception) {
             throw new BobException(invalidDateMessage);
         }
+    }
+
+    /**
+     * Creates a copy of a task with a replacement description.
+     *
+     * @param task Existing task to copy.
+     * @param description Replacement description.
+     * @return Task copy containing the replacement description.
+     * @throws BobException If the replacement description is blank.
+     */
+    private Task createTaskWithDescription(Task task, String description) throws BobException {
+        validateTaskDescriptionIsPresent(description);
+        if (task instanceof Deadline deadline) {
+            return new Deadline(description, deadline.getDueDate());
+        }
+        if (task instanceof Event event) {
+            return new Event(description, event.getStartDate(), event.getEndDate());
+        }
+        if (task instanceof ToDo) {
+            return new ToDo(description);
+        }
+        throw new BobException("This task type cannot be edited.");
+    }
+
+    /**
+     * Creates a copy of a deadline with a replacement due date.
+     *
+     * @param task Existing task to copy.
+     * @param dueDateText Replacement due date text.
+     * @return Deadline copy containing the replacement due date.
+     * @throws BobException If the task is not a deadline or the date is invalid.
+     */
+    private Task createDeadlineWithDueDate(Task task, String dueDateText) throws BobException {
+        if (!(task instanceof Deadline deadline)) {
+            throw new BobException("Only deadline tasks have a 'by' field.");
+        }
+        LocalDate dueDate = parseDate(dueDateText, "Please enter the deadline date as yyyy-MM-dd.");
+        return new Deadline(deadline.getDescription(), dueDate);
+    }
+
+    /**
+     * Creates a copy of an event with a replacement start date.
+     *
+     * @param task Existing task to copy.
+     * @param startDateText Replacement start date text.
+     * @return Event copy containing the replacement start date.
+     * @throws BobException If the task is not an event or the date is invalid.
+     */
+    private Task createEventWithStartDate(Task task, String startDateText) throws BobException {
+        if (!(task instanceof Event event)) {
+            throw new BobException("Only event tasks have a 'from' field.");
+        }
+        LocalDate startDate = parseDate(startDateText, "Please enter the event date as yyyy-MM-dd.");
+        return new Event(event.getDescription(), startDate, event.getEndDate());
+    }
+
+    /**
+     * Creates a copy of an event with a replacement end date.
+     *
+     * @param task Existing task to copy.
+     * @param endDateText Replacement end date text.
+     * @return Event copy containing the replacement end date.
+     * @throws BobException If the task is not an event or the date is invalid.
+     */
+    private Task createEventWithEndDate(Task task, String endDateText) throws BobException {
+        if (!(task instanceof Event event)) {
+            throw new BobException("Only event tasks have a 'to' field.");
+        }
+        LocalDate endDate = parseDate(endDateText, "Please enter the event date as yyyy-MM-dd.");
+        return new Event(event.getDescription(), event.getStartDate(), endDate);
     }
 }

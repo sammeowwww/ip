@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 import bob.exception.BobException;
+import bob.parser.EditDetails;
 import bob.parser.ParsedCommand;
 import bob.parser.Parser;
 import bob.storage.Storage;
@@ -117,6 +118,7 @@ public class Bob {
             case "bye" -> "Bye! See you later, alligator!";
             case "list" -> getTaskListMessage();
             case "find" -> findTasksFromCommand(parsedCommand);
+            case "edit" -> editTaskFromCommand(parsedCommand);
             case "unmark" -> markTaskAsIncomplete(parsedCommand);
             case "mark" -> markTaskAsComplete(parsedCommand);
             case "todo", "deadline", "event" -> addTaskFromCommand(parsedCommand);
@@ -135,6 +137,22 @@ public class Bob {
     private String findTasksFromCommand(ParsedCommand parsedCommand) throws BobException {
         String keyword = parser.parseKeyword(parsedCommand);
         return getMatchingTasksMessage(keyword);
+    }
+
+    /**
+     * Replaces one field of the task selected by an edit command.
+     *
+     * @param parsedCommand Parsed edit command.
+     * @return Response containing the edited task.
+     * @throws BobException If the edit details or selected task are invalid.
+     */
+    private String editTaskFromCommand(ParsedCommand parsedCommand) throws BobException {
+        EditDetails editDetails = parser.parseEditDetails(parsedCommand);
+        Task existingTask = taskList.getTask(editDetails.taskNumber());
+        Task editedTask = parser.createEditedTask(existingTask, editDetails);
+        taskList.replaceTask(editDetails.taskNumber(), editedTask);
+        saveTaskList();
+        return "Nice! I've updated this task:\n" + editedTask;
     }
 
     /**
@@ -217,7 +235,8 @@ public class Bob {
                 + "6. unmark <task index>\n"
                 + "7. delete <task index>\n"
                 + "8. find <keyword>\n"
-                + "9. bye";
+                + "9. edit <task index> <description|by|from|to> <new value>\n"
+                + "10. bye";
     }
 
     /**
