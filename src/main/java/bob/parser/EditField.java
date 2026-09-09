@@ -11,6 +11,12 @@ public enum EditField {
     START_DATE("from"),
     END_DATE("to");
 
+    private static final String EDITABLE_FIELDS_MESSAGE = "Editable fields:\n"
+            + "- description (all task types)\n"
+            + "- by (deadline tasks only)\n"
+            + "- from (event tasks only)\n"
+            + "- to (event tasks only)";
+
     private final String commandWord;
 
     /**
@@ -35,6 +41,15 @@ public enum EditField {
                 return editField;
             }
         }
-        throw new BobException("Editable fields are: description, by, from, or to.");
+        throw new BobException(EDITABLE_FIELDS_MESSAGE);
+    }
+
+    /**
+     * Returns guidance describing every editable field and its applicable task types.
+     *
+     * @return Guidance for selecting an editable field.
+     */
+    public static String getEditableFieldsMessage() {
+        return EDITABLE_FIELDS_MESSAGE;
     }
 }

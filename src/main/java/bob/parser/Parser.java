@@ -13,6 +13,9 @@ import bob.task.ToDo;
  * Interprets user input and converts command arguments into application data.
  */
 public class Parser {
+    private static final String EDIT_COMMAND_USAGE =
+            "Use: edit <task index> <field> <new value>.";
+
     /**
      * Contains the description and date text extracted from a deadline command.
      *
@@ -128,7 +131,7 @@ public class Parser {
         String[] editParts = editArgument.split("\\s+", 3);
         boolean hasTaskNumberFieldAndValue = editParts.length == 3;
         if (!hasTaskNumberFieldAndValue) {
-            throw new BobException("Use: edit <task index> <field> <new value>.");
+            throw new BobException(getEditCommandHelpMessage());
         }
 
         String taskNumberText = editParts[0];
@@ -136,12 +139,37 @@ public class Parser {
         String newValue = editParts[2].trim();
         boolean isNewValueMissing = newValue.isBlank();
         if (isNewValueMissing) {
-            throw new BobException("Use: edit <task index> <field> <new value>.");
+            throw new BobException(getEditCommandHelpMessage());
         }
 
-        int taskNumber = parseTaskNumber(taskNumberText, command.getCommandWord());
+        int taskNumber = parseEditTaskNumber(taskNumberText);
         EditField field = EditField.fromCommandWord(fieldCommandWord);
         return new EditDetails(taskNumber, field, newValue);
+    }
+
+    /**
+     * Converts the task-number portion of an edit command into an integer.
+     *
+     * @param taskNumberText Text containing the task number.
+     * @return Task number represented by the text.
+     * @throws BobException If the text does not represent an integer.
+     */
+    private int parseEditTaskNumber(String taskNumberText) throws BobException {
+        try {
+            return Integer.parseInt(taskNumberText);
+        } catch (NumberFormatException exception) {
+            throw new BobException(getEditCommandHelpMessage());
+        }
+    }
+
+    /**
+     * Returns edit-command usage and editable-field guidance.
+     *
+     * @return Guidance for entering a valid edit command.
+     */
+    private String getEditCommandHelpMessage() {
+        return EDIT_COMMAND_USAGE + System.lineSeparator()
+                + EditField.getEditableFieldsMessage();
     }
 
     /**

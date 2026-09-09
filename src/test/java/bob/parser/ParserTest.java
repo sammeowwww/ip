@@ -105,14 +105,34 @@ class ParserTest {
     void parseEditDetails_missingNewValue_exceptionThrown() {
         ParsedCommand command = new ParsedCommand("edit", "2 description");
 
-        assertThrows(BobException.class, () -> parser.parseEditDetails(command));
+        BobException exception = assertThrows(
+                BobException.class, () -> parser.parseEditDetails(command));
+
+        assertTrue(exception.getMessage().contains("description (all task types)"));
+        assertTrue(exception.getMessage().contains("by (deadline tasks only)"));
+        assertTrue(exception.getMessage().contains("from (event tasks only)"));
+        assertTrue(exception.getMessage().contains("to (event tasks only)"));
     }
 
     @Test
     void parseEditDetails_unknownField_exceptionThrown() {
         ParsedCommand command = new ParsedCommand("edit", "2 priority high");
 
-        assertThrows(BobException.class, () -> parser.parseEditDetails(command));
+        BobException exception = assertThrows(
+                BobException.class, () -> parser.parseEditDetails(command));
+
+        assertTrue(exception.getMessage().contains("Editable fields:"));
+    }
+
+    @Test
+    void parseEditDetails_nonNumericTaskNumber_editGuidanceShown() {
+        ParsedCommand command = new ParsedCommand("edit", "two description read book");
+
+        BobException exception = assertThrows(
+                BobException.class, () -> parser.parseEditDetails(command));
+
+        assertTrue(exception.getMessage().contains("Use: edit <task index> <field> <new value>."));
+        assertTrue(exception.getMessage().contains("Editable fields:"));
     }
 
     @Test
