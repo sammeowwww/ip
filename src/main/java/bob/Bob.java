@@ -17,7 +17,9 @@ import bob.ui.Ui;
  */
 public class Bob {
     private static final String WELCOME_MESSAGE =
-            "Hey! I'm Bob, your friendly personal assistant.\nWhat can I do for you today?";
+            "Hey! I'm Bob, your friendly personal assistant.\n"
+                    + "I hope you're not having a ruff day..."
+                    + "What can I do for you!";
 
     private final Ui ui;
     private final Parser parser;
@@ -115,7 +117,7 @@ public class Bob {
     private String executeParsedCommand(ParsedCommand parsedCommand) throws BobException {
         return switch (parsedCommand.getCommandWord()) {
             case "help" -> getHelpMessage();
-            case "bye" -> "Bye! See you later, alligator!";
+            case "bye" -> "Bye! I hope you have a paw-sitive dayyy!";
             case "list" -> getTaskListMessage();
             case "find" -> findTasksFromCommand(parsedCommand);
             case "edit" -> editTaskFromCommand(parsedCommand);
@@ -192,7 +194,8 @@ public class Bob {
         Task task = parser.parseTask(parsedCommand);
         taskList.addTask(task);
         saveTaskList();
-        return "Nice! I've added this task:\n" + task
+        return "Looks like you have added a task. All the best and remember, "
+                + "anything is paw-sible!\n" + task
                 + "\nYou now have " + taskList.getTaskCount() + " tasks.";
     }
 
@@ -206,7 +209,8 @@ public class Bob {
     private String deleteTaskFromCommand(ParsedCommand parsedCommand) throws BobException {
         taskList.deleteTask(parser.parseTaskNumber(parsedCommand));
         saveTaskList();
-        return "I have deleted the task.\nYou now have "
+        return "Looks like you have deleted the task! Remember to complete the rest!\n"
+                + "You now have "
                 + taskList.getTaskCount() + " tasks.";
     }
 
@@ -225,7 +229,7 @@ public class Bob {
      * @return Help message containing the supported command formats.
      */
     private String getHelpMessage() {
-        return "Bob is to the rescue!!!\n"
+        return "Bob is coming to the rescue!!!\n"
                 + "Here are the commands you can use:\n"
                 + "1. todo <task>\n"
                 + "2. deadline <task> /by <yyyy-MM-dd>\n"
@@ -249,7 +253,10 @@ public class Bob {
         if (tasks.isEmpty()) {
             return "Your list is empty. Add a task to get started!";
         }
-        return formatTasks("Here are your tasks:", tasks);
+        return formatTasks(
+                "Here you go! This is your task list, let's try our best to complete it! "
+                        + "Anything is paw-sible!!",
+                tasks);
     }
 
     /**
