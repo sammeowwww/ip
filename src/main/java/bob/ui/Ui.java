@@ -12,15 +12,27 @@ public class Ui {
      * Creates a user interface that reads from standard input.
      */
     public Ui() {
-        this.scanner = new Scanner(System.in);
+        this(new Scanner(System.in));
+    }
+
+    /**
+     * Creates a user interface that reads from the specified scanner.
+     *
+     * @param scanner Scanner supplying command-line input.
+     */
+    Ui(Scanner scanner) {
+        this.scanner = scanner;
     }
 
     /**
      * Reads the next command entered by the user.
      *
-     * @return Trimmed command entered by the user.
+     * @return Trimmed command entered by the user, or {@code bye} at end-of-input.
      */
     public String readCommand() {
+        if (!scanner.hasNextLine()) {
+            return "bye";
+        }
         return scanner.nextLine().trim();
     }
 

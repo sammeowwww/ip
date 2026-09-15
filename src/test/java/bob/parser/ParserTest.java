@@ -69,6 +69,14 @@ class ParserTest {
     }
 
     /**
+     * Tests that null user input is rejected without an unchecked exception.
+     */
+    @Test
+    void parse_nullInput_bobExceptionThrown() {
+        assertThrows(BobException.class, () -> parser.parse(null));
+    }
+
+    /**
      * Tests that a find command's keyword is returned.
      *
      * @throws BobException If the valid keyword is unexpectedly rejected.

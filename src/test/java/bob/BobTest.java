@@ -58,6 +58,18 @@ class BobTest {
     }
 
     @Test
+    void executeUserCommandWithResult_nullCommand_errorResultReturned() {
+        Bob bob = new Bob(temporaryDirectory.resolve("null-command-data.txt"));
+
+        CommandResult result = bob.executeUserCommandWithResult(null);
+
+        assertTrue(result.isError());
+        assertEquals(
+                "Enter a command! If you need a list of commands, please type 'help'. ",
+                result.message());
+    }
+
+    @Test
     void executeUserCommand_invalidCommand_errorMessageReturned() {
         Bob bob = new Bob(temporaryDirectory.resolve("string-response-data.txt"));
 

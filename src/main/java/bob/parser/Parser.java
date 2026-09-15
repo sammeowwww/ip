@@ -49,12 +49,12 @@ public class Parser {
      * @throws BobException If the input is empty.
      */
     public ParsedCommand parse(String input) throws BobException {
-        String trimmedInput = input.trim();
-        if (trimmedInput.isEmpty()) {
+        if (input == null || input.isBlank()) {
             throw new BobException("Enter a command! "
                     + "If you need a list of commands, please type 'help'. ");
         }
 
+        String trimmedInput = input.trim();
         String[] commandParts = trimmedInput.split("\\s+", 2);
         String commandWord = commandParts[0];
         String argument = commandParts.length > 1 ? commandParts[1] : "";
