@@ -16,6 +16,8 @@ import javafx.scene.shape.Circle;
  */
 public class DialogBox extends HBox {
     private static final double AVATAR_RADIUS = 22;
+    private static final double USER_BUBBLE_WIDTH_RATIO = 0.72;
+    private static final double BOB_BUBBLE_WIDTH_RATIO = 0.84;
 
     @FXML
     private Label messageLabel;
@@ -106,6 +108,8 @@ public class DialogBox extends HBox {
     private void configureAsUserDialog() {
         getStyleClass().add("user-dialog");
         messageLabel.getStyleClass().add("user-bubble");
+        messageLabel.maxWidthProperty().bind(
+                widthProperty().multiply(USER_BUBBLE_WIDTH_RATIO));
         avatarImageView.setManaged(false);
         avatarImageView.setVisible(false);
     }
@@ -119,6 +123,8 @@ public class DialogBox extends HBox {
         setAlignment(Pos.TOP_LEFT);
         getStyleClass().add("bob-dialog");
         messageLabel.getStyleClass().add("bob-bubble");
+        messageLabel.maxWidthProperty().bind(
+                widthProperty().multiply(BOB_BUBBLE_WIDTH_RATIO));
         avatarImageView.setImage(bobAvatar);
         avatarImageView.setClip(
                 new Circle(AVATAR_RADIUS, AVATAR_RADIUS, AVATAR_RADIUS));

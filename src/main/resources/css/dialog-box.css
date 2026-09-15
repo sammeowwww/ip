@@ -27,11 +27,11 @@
 }
 
 .user-dialog {
-    -fx-padding: 3px 0 3px 72px;
+    -fx-padding: 3px 0 3px 36px;
 }
 
 .bob-dialog {
-    -fx-padding: 3px 48px 3px 0;
+    -fx-padding: 3px 20px 3px 0;
 }
 
 #avatarImageView {
