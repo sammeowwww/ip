@@ -15,7 +15,7 @@ import javafx.scene.shape.Circle;
  * Displays one user or Bob message in the conversation.
  */
 public class DialogBox extends HBox {
-    private static final double AVATAR_RADIUS = 22;
+    private static final double AVATAR_RADIUS = 19;
     private static final double USER_BUBBLE_WIDTH_RATIO = 0.72;
     private static final double BOB_BUBBLE_WIDTH_RATIO = 0.84;
 
