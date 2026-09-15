@@ -90,11 +90,22 @@ public class Bob {
      * @return Response to display to the user.
      */
     public String executeUserCommand(String userCommand) {
+        return executeUserCommandWithResult(userCommand).message();
+    }
+
+    /**
+     * Executes a user command and returns its message and error status.
+     *
+     * @param userCommand User command to execute.
+     * @return Result containing the response and whether an error occurred.
+     */
+    public CommandResult executeUserCommandWithResult(String userCommand) {
         try {
             ParsedCommand parsedCommand = parser.parse(userCommand);
-            return executeParsedCommand(parsedCommand);
+            String response = executeParsedCommand(parsedCommand);
+            return new CommandResult(response, false);
         } catch (BobException exception) {
-            return exception.getMessage();
+            return new CommandResult(exception.getMessage(), true);
         }
     }
 

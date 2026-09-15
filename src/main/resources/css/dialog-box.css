@@ -18,6 +18,14 @@
     -fx-text-fill: #353838;
 }
 
+.error-bubble {
+    -fx-background-color: #fff1f1;
+    -fx-border-color: #d84a4a;
+    -fx-border-radius: 16px 16px 16px 3px;
+    -fx-border-width: 2px;
+    -fx-text-fill: #8f2424;
+}
+
 .user-dialog {
     -fx-padding: 3px 0 3px 72px;
 }

@@ -1,6 +1,8 @@
 package bob;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -19,6 +21,50 @@ import bob.task.Deadline;
 class BobTest {
     @TempDir
     private Path temporaryDirectory;
+
+    @Test
+    void executeUserCommandWithResult_validCommand_successResultReturned() {
+        Bob bob = new Bob(temporaryDirectory.resolve("valid-command-data.txt"));
+
+        CommandResult result = bob.executeUserCommandWithResult("todo read book");
+
+        assertFalse(result.isError());
+        assertEquals(
+                "Looks like you have added a task. All the best and remember, "
+                        + "anything is paw-sible!\n"
+                        + "[T][] read book\n"
+                        + "You now have 1 tasks.",
+                result.message());
+    }
+
+    @Test
+    void executeUserCommandWithResult_invalidCommand_errorResultReturned() {
+        Bob bob = new Bob(temporaryDirectory.resolve("invalid-command-data.txt"));
+
+        CommandResult result = bob.executeUserCommandWithResult("dance");
+
+        assertTrue(result.isError());
+        assertEquals("Invalid command :( If you need help, type 'help'.", result.message());
+    }
+
+    @Test
+    void executeUserCommandWithResult_invalidArguments_errorResultReturned() {
+        Bob bob = new Bob(temporaryDirectory.resolve("invalid-arguments-data.txt"));
+
+        CommandResult result = bob.executeUserCommandWithResult("deadline return book");
+
+        assertTrue(result.isError());
+        assertEquals("Use: deadline <description> /by <yyyy-MM-dd>.", result.message());
+    }
+
+    @Test
+    void executeUserCommand_invalidCommand_errorMessageReturned() {
+        Bob bob = new Bob(temporaryDirectory.resolve("string-response-data.txt"));
+
+        String response = bob.executeUserCommand("dance");
+
+        assertEquals("Invalid command :( If you need help, type 'help'.", response);
+    }
 
     @Test
     void executeUserCommand_addTodo_taskAndCountShown() {

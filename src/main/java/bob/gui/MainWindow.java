@@ -3,6 +3,7 @@ package bob.gui;
 import java.util.Objects;
 
 import bob.Bob;
+import bob.CommandResult;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
@@ -64,8 +65,8 @@ public class MainWindow extends AnchorPane {
             return;
         }
 
-        String bobResponse = bob.executeUserCommand(userCommand);
-        showConversationTurn(userCommand, bobResponse);
+        CommandResult commandResult = bob.executeUserCommandWithResult(userCommand);
+        showConversationTurn(userCommand, commandResult);
         userInput.clear();
     }
 
@@ -91,12 +92,13 @@ public class MainWindow extends AnchorPane {
      * Displays a user command followed by Bob's response.
      *
      * @param userCommand User command to display.
-     * @param bobResponse Bob response to display.
+     * @param commandResult Bob response and its error status.
      */
-    private void showConversationTurn(String userCommand, String bobResponse) {
+    private void showConversationTurn(String userCommand, CommandResult commandResult) {
         dialogContainer.getChildren().addAll(
                 DialogBox.createUserDialog(userCommand),
-                DialogBox.createBobDialog(bobResponse, bobAvatar));
+                DialogBox.createBobDialog(
+                        commandResult.message(), bobAvatar, commandResult.isError()));
     }
 
     /**

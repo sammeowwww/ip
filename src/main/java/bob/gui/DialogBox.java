@@ -55,8 +55,23 @@ public class DialogBox extends HBox {
      * @return Dialog box for Bob.
      */
     public static DialogBox createBobDialog(String messageText, Image bobAvatar) {
+        return createBobDialog(messageText, bobAvatar, false);
+    }
+
+    /**
+     * Creates a left-aligned dialog containing Bob's response and optional error styling.
+     *
+     * @param messageText Bob's response to display.
+     * @param bobAvatar Bob's avatar.
+     * @param isError Whether the response describes an error.
+     * @return Dialog box for Bob.
+     */
+    public static DialogBox createBobDialog(String messageText, Image bobAvatar, boolean isError) {
         DialogBox dialogBox = new DialogBox(messageText);
         dialogBox.configureAsBobDialog(bobAvatar);
+        if (isError) {
+            dialogBox.messageLabel.getStyleClass().add("error-bubble");
+        }
         return dialogBox;
     }
 
