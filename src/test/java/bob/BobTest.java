@@ -29,7 +29,7 @@ class BobTest {
         assertEquals(
                 "Looks like you have added a task. All the best and remember, "
                         + "anything is paw-sible!\n"
-                        + "[T][ ] read book\n"
+                        + "[T][] read book\n"
                         + "You now have 1 tasks.",
                 response);
     }
@@ -43,7 +43,7 @@ class BobTest {
         assertEquals(
                 "Looks like you have added a task. All the best and remember, "
                         + "anything is paw-sible!\n"
-                        + "[D][ ] return book (by: Sep 20 2026)\n"
+                        + "[D][] return book (by: Sep 20 2026)\n"
                         + "You now have 1 tasks.",
                 response);
     }
@@ -58,7 +58,7 @@ class BobTest {
         assertEquals(
                 "Looks like you have added a task. All the best and remember, "
                         + "anything is paw-sible!\n"
-                        + "[E][ ] project meeting (from: Sep 20 2026 to: Sep 21 2026)\n"
+                        + "[E][] project meeting (from: Sep 20 2026 to: Sep 21 2026)\n"
                         + "You now have 1 tasks.",
                 response);
     }
@@ -74,7 +74,7 @@ class BobTest {
                 "Here you go! This is your task list, let's try our best to complete it! "
                         + "Anything is paw-sible!!"
                         + System.lineSeparator()
-                        + "1. [T][ ] read book",
+                        + "1. [T][] read book",
                 response);
     }
 
