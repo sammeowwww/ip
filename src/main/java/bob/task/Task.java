@@ -80,7 +80,7 @@ public class Task {
      */
     @Override
     public String toString() {
-        String completionMark = isDone() ? "X" : "";
+        String completionMark = isDone() ? "X" : " ";
         return "[" + completionMark + "] " + description;
     }
 }
