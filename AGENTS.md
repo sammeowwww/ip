@@ -36,6 +36,9 @@ Unless the user says otherwise, assume that you are assisting a student working 
   `.agents/skills/seedu-code-quality-standard/SKILL.md`. Apply its readability,
   naming, simplicity, safety, duplication, and commenting guidelines to all
   code in scope and verify the result before handing work back to the user.
+* After every code change, read and follow
+  `.agents/skills/run-gradle-check/SKILL.md`. Run the complete Gradle check and
+  report any verification failure before handing work back to the user.
 * Before proposing or creating a Git commit or branch, read and follow
   `.agents/skills/seedu-git-standard/SKILL.md`. This requirement does not grant
   permission to commit, push, or create a branch.
