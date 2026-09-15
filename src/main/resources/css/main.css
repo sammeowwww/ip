@@ -17,7 +17,7 @@
 
 .header-subtitle {
     -fx-font-size: 12px;
-    -fx-text-fill: #7b8282;
+    -fx-text-fill: #596262;
 }
 
 .scroll-pane,
@@ -45,11 +45,12 @@
 }
 
 .message-input:focused {
-    -fx-border-color: #5c9c9d;
+    -fx-border-color: #2f7072;
+    -fx-border-width: 2px;
 }
 
 .send-button {
-    -fx-background-color: #3d8588;
+    -fx-background-color: #286d70;
     -fx-background-radius: 18px;
     -fx-cursor: hand;
     -fx-font-weight: bold;
@@ -58,7 +59,17 @@
 }
 
 .send-button:hover {
-    -fx-background-color: #327477;
+    -fx-background-color: #225e60;
+}
+
+.send-button:pressed {
+    -fx-background-color: #194b4d;
+}
+
+.send-button:focused {
+    -fx-border-color: #163f40;
+    -fx-border-radius: 18px;
+    -fx-border-width: 2px;
 }
 
 .scroll-bar:vertical {

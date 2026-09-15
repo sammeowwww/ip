@@ -2,6 +2,7 @@ package bob.gui;
 
 import java.io.IOException;
 
+import javafx.animation.FadeTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -10,6 +11,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.shape.Circle;
+import javafx.util.Duration;
 
 /**
  * Displays one user or Bob message in the conversation.
@@ -18,6 +20,8 @@ public class DialogBox extends HBox {
     private static final double AVATAR_RADIUS = 19;
     private static final double USER_BUBBLE_WIDTH_RATIO = 0.72;
     private static final double BOB_BUBBLE_WIDTH_RATIO = 0.84;
+    private static final double ENTRANCE_ANIMATION_DURATION_MILLISECONDS = 140;
+    private static final double ENTRANCE_ANIMATION_START_OPACITY = 0.25;
 
     @FXML
     private Label messageLabel;
@@ -35,6 +39,7 @@ public class DialogBox extends HBox {
         loadFxmlLayout();
         assertFxmlFieldsAreInjected();
         messageLabel.setText(messageText);
+        playEntranceAnimation();
     }
 
     /**
@@ -100,6 +105,17 @@ public class DialogBox extends HBox {
     private void assertFxmlFieldsAreInjected() {
         assert messageLabel != null : "messageLabel must be injected by FXMLLoader";
         assert avatarImageView != null : "avatarImageView must be injected by FXMLLoader";
+    }
+
+    /**
+     * Fades this dialog into view without delaying user interaction.
+     */
+    private void playEntranceAnimation() {
+        FadeTransition fadeTransition = new FadeTransition(
+                Duration.millis(ENTRANCE_ANIMATION_DURATION_MILLISECONDS), this);
+        fadeTransition.setFromValue(ENTRANCE_ANIMATION_START_OPACITY);
+        fadeTransition.setToValue(1);
+        fadeTransition.play();
     }
 
     /**
